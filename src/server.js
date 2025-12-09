@@ -9,38 +9,33 @@ const PORT = process.env.PORT || 3000;
 // Path to DB file (../data/players.json from src/)
 const DB_PATH = path.join(__dirname, "..", "data", "players.json");
 
-// ---------- ITEM POOL (Season 1) ----------
+// ---------- ITEM / GEAR POOL (WORKSITE THEME) ----------
 const ITEM_POOL = [
-  // ===== COMMON =====
-  { name: "Cracked Wooden Sword", type: "weapon",  rarity: "common",    minPower: 1, maxPower: 3 },
-  { name: "Rusty Dagger",         type: "weapon",  rarity: "common",    minPower: 1, maxPower: 3 },
-  { name: "Scuffed Keyboard",     type: "weapon",  rarity: "common",    minPower: 1, maxPower: 4 },
-  { name: "Laggy Mouse",          type: "weapon",  rarity: "common",    minPower: 1, maxPower: 3 },
-  { name: "Streamer Hoodie",      type: "trinket", rarity: "common",    minPower: 1, maxPower: 2 },
-  { name: "Frayed Headset",       type: "trinket", rarity: "common",    minPower: 1, maxPower: 2 },
-  { name: "Bent Spoon",           type: "trinket", rarity: "common",    minPower: 1, maxPower: 2 },
+  // COMMON – basic tools & PPE
+  { name: "Chipped Trowel",           type: "weapon",  rarity: "common",    minPower: 1, maxPower: 3 },
+  { name: "Bent Screed Bar",          type: "weapon",  rarity: "common",    minPower: 1, maxPower: 4 },
+  { name: "Cracked Spirit Level",     type: "trinket", rarity: "common",    minPower: 1, maxPower: 2 },
+  { name: "Dusty Hi-Vis Vest",        type: "trinket", rarity: "common",    minPower: 1, maxPower: 3 },
+  { name: "Scuffed Steel Caps",       type: "trinket", rarity: "common",    minPower: 1, maxPower: 3 },
 
-  // ===== RARE =====
-  { name: "Neon Katana",          type: "weapon",  rarity: "rare",      minPower: 3, maxPower: 7 },
-  { name: "Shadow Dagger",        type: "weapon",  rarity: "rare",      minPower: 4, maxPower: 7 },
-  { name: "Mechanical Keyboard",  type: "weapon",  rarity: "rare",      minPower: 3, maxPower: 6 },
-  { name: "Pro Gamer Headset",    type: "trinket", rarity: "rare",      minPower: 3, maxPower: 6 },
-  { name: "Glitched Emote Charm", type: "trinket", rarity: "rare",      minPower: 2, maxPower: 5 },
-  { name: "Stabilised Wi-Fi Router", type: "trinket", rarity: "rare",   minPower: 2, maxPower: 5 },
+  // RARE – decent tradie gear
+  { name: "Magnesium Bull Float",     type: "weapon",  rarity: "rare",      minPower: 3, maxPower: 7 },
+  { name: "Laser Line Level",         type: "trinket", rarity: "rare",      minPower: 2, maxPower: 5 },
+  { name: "Carbon Screed Rail",       type: "weapon",  rarity: "rare",      minPower: 4, maxPower: 8 },
+  { name: "Reo Bender",               type: "weapon",  rarity: "rare",      minPower: 3, maxPower: 7 },
+  { name: "Vented Hard Hat",          type: "trinket", rarity: "rare",      minPower: 3, maxPower: 6 },
 
-  // ===== EPIC =====
-  { name: "Cyber Dragon Blade",   type: "weapon",  rarity: "epic",      minPower: 6, maxPower: 11 },
-  { name: "Void Edge Greatsword", type: "weapon",  rarity: "epic",      minPower: 7, maxPower: 12 },
-  { name: "Mod Crown",            type: "trinket", rarity: "epic",      minPower: 4, maxPower: 8 },
-  { name: "Quantum Microphone",   type: "trinket", rarity: "epic",      minPower: 5, maxPower: 9 },
-  { name: "Streamer Throne",      type: "trinket", rarity: "epic",      minPower: 5, maxPower: 9 },
+  // EPIC – big dog contractor gear
+  { name: "Diamond Tip Trowel",       type: "weapon",  rarity: "epic",      minPower: 6, maxPower: 11 },
+  { name: "Site Foreman Radio",       type: "trinket", rarity: "epic",      minPower: 4, maxPower: 8 },
+  { name: "Heavy-Duty Demo Hammer",   type: "weapon",  rarity: "epic",      minPower: 7, maxPower: 12 },
+  { name: "Reinforced Knee Pads",     type: "trinket", rarity: "epic",      minPower: 5, maxPower: 9 },
 
-  // ===== LEGENDARY =====
-  { name: "Ancient TOS Scroll",   type: "trinket", rarity: "legendary", minPower: 8, maxPower: 14 },
-  { name: "Voidstorm Mouse",      type: "weapon",  rarity: "legendary", minPower: 10, maxPower: 16 },
-  { name: "Omega Ban Hammer",     type: "weapon",  rarity: "legendary", minPower: 11, maxPower: 18 },
-  { name: "Partner Checkmark",    type: "trinket", rarity: "legendary", minPower: 9, maxPower: 15 },
-  { name: "Eternal Sub Badge",    type: "trinket", rarity: "legendary", minPower: 9, maxPower: 15 }
+  // LEGENDARY – meme-tier god gear
+  { name: "Mythic Wheelbarrow",       type: "weapon",  rarity: "legendary", minPower: 10, maxPower: 16 },
+  { name: "King of Concrete Gloves",  type: "trinket", rarity: "legendary", minPower: 9, maxPower: 15 },
+  { name: "Phantom Screed Machine",   type: "weapon",  rarity: "legendary", minPower: 11, maxPower: 18 },
+  { name: "Aurora Floodlight Rig",    type: "trinket", rarity: "legendary", minPower: 9, maxPower: 15 }
 ];
 
 // ---------- DB HELPERS ----------
@@ -244,4 +239,85 @@ app.get("/api/boss", (req, res) => {
 // ---------- START ----------
 app.listen(PORT, () => {
   console.log(`ChatQuest API listening on port ${PORT}`);
+});
+
+// Simple help / docs page (linked from !help)
+app.get("/help", (req, res) => {
+  res.send(`
+    <html>
+      <head>
+        <title>Tradi3 ChatQuest - Help</title>
+        <style>
+          body {
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            background: #050816;
+            color: #f5f5f5;
+            padding: 24px;
+            line-height: 1.5;
+          }
+          h1, h2 {
+            color: #ffdd55;
+          }
+          code {
+            background: rgba(255,255,255,0.06);
+            padding: 2px 5px;
+            border-radius: 4px;
+          }
+          .cmd {
+            margin-bottom: 10px;
+          }
+          .cmd-name {
+            font-weight: 600;
+          }
+        </style>
+      </head>
+      <body>
+        <h1>Tradi3 ChatQuest - Help</h1>
+        <p>Welcome to the Worksite, rookie! This mini-RPG runs in Tradi3's Twitch chat using Fossabot.</p>
+
+        <h2>Basic Commands</h2>
+
+        <div class="cmd">
+          <span class="cmd-name"><code>!quest</code></span> – Go on a quick quest, earn XP & coins, and sometimes find gear.
+        </div>
+
+        <div class="cmd">
+          <span class="cmd-name"><code>!stats</code></span> – Shows your level, XP, coins, and equipped gear.
+        </div>
+
+        <div class="cmd">
+          <span class="cmd-name"><code>!daily</code></span> – Once per day bonus XP & coins.
+        </div>
+
+        <div class="cmd">
+          <span class="cmd-name"><code>!inv</code></span> – Shows your inventory and what you have equipped.
+        </div>
+
+        <div class="cmd">
+          <span class="cmd-name"><code>!top</code></span> – Top players in this channel.
+        </div>
+
+        <div class="cmd">
+          <span class="cmd-name"><code>!boss</code></span> – Spawns/attacks a shared channel boss for big XP & coins.
+        </div>
+
+        <div class="cmd">
+          <span class="cmd-name"><code>!gamble [amount]</code></span> – Gamble some coins (max 200) for a 50/50 shot at doubling.
+        </div>
+
+        <h2>Season 1 – Worksite Theme</h2>
+        <p>
+          The whole game is themed around the worksite and concrete grind:
+          quests are quick jobs, bosses are site hazards, and items are tools / gear.
+        </p>
+
+        <p>
+          More systems are planned:
+          shop, item selling, HP & damage, healing, and seasonal content.
+        </p>
+
+        <p>Questions or ideas? Drop them in chat or the Discord channel.</p>
+      </body>
+    </html>
+  `);
 });
