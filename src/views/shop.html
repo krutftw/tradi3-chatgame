@@ -1,14 +1,23 @@
 {{!< layout}}
 
 <section class="hero shop-hero">
-  <p class="eyebrow">Tool Depot · Season 1</p>
+  <p class="eyebrow">Tool Depot · Season {{season}}</p>
   <h2>Spend site pay without spamming chat.</h2>
   <p>Buy upgrades, sell dupes, keep the slab moving. Uses your Twitch name to link your profile.</p>
-  <div class="shop-user">
-    <label for="shop-user-input">Your Twitch name</label>
-    <input id="shop-user-input" type="text" placeholder="tradi3" value="{{user}}">
-    <button class="btn ghost" id="shop-save-user">Set name</button>
-  </div>
+  {{#if authed}}
+    <div class="shop-user">
+      <p class="muted">Logged in as <strong>{{user}}</strong>. <a href="/auth/logout">Log out</a></p>
+    </div>
+  {{else}}
+    <div class="shop-user">
+      <label for="shop-user-input">Your Twitch name (or log in)</label>
+      <input id="shop-user-input" type="text" placeholder="tradi3" value="{{user}}">
+      {{#if oauthEnabled}}
+        <a class="btn primary" href="/auth/twitch">Log in with Twitch</a>
+      {{/if}}
+      <button class="btn ghost" id="shop-save-user">Set name</button>
+    </div>
+  {{/if}}
   <p class="muted">Channel locked to #tradi3. Purchases auto-equip if they beat your current gear.</p>
 </section>
 
