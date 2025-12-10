@@ -22,7 +22,6 @@ module.exports = {
       return res.send(`${user}, you've used all heals this shift. Try again later.`);
     }
 
-    // Find a consumable in inventory
     const idx = player.inventory.findIndex((i) => i.type === "consumable");
     if (idx === -1) {
       return res.send(`${user}, no First Aid Kits in your inventory. Buy from the shop.`);

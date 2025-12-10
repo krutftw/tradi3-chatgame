@@ -646,10 +646,9 @@ app.get("/api/shop/buy", (req, res) => {
   const p = getPlayer(db, channel, user);
 
   if (stockItem.type === "consumable") {
-    if (!canHeal(p)) {
-      return res
-        .status(400)
-        .send(`${user}, you've used all heals this shift. Wait before healing again.`);
+    const existingKits = p.inventory.filter((i) => i.type === "consumable").length;
+    if (existingKits >= 3) {
+      return res.status(400).send(`${user}, you can only carry 3 First Aid Kits.`);
     }
     if (p.coins < stockItem.price) {
       return res
@@ -657,11 +656,10 @@ app.get("/api/shop/buy", (req, res) => {
         .send(`${user}, you need ${stockItem.price} coins for ${stockItem.name}. Pay: ${p.coins}.`);
     }
     p.coins -= stockItem.price;
-    const healed = healPlayer(p, stockItem.heal || 60);
-    recordHealUse(p);
+    p.inventory.push(makeItemFromStock(stockItem));
     saveDb(db);
     return res.send(
-      `${user} used ${stockItem.name} and healed ${healed} HP (HP ${p.hp}/${p.maxHp || 100}). Pay left: ${p.coins}.`
+      `${user} bought ${stockItem.name}. Carrying ${existingKits + 1}/3 kits. Pay left: ${p.coins}.`
     );
   }
 

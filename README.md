@@ -29,6 +29,8 @@ The server listens on `PORT` (default 3000).
 - `!stats` → `$(urlfetch https://tradi3-chatgame.onrender.com/api/stats?user=$(user)&channel=$(channel))`
 - `!top` → `$(urlfetch https://tradi3-chatgame.onrender.com/api/top?channel=$(channel))`
 - `!inv` → `$(urlfetch https://tradi3-chatgame.onrender.com/api/inventory?user=$(user)&channel=$(channel))`
+- `!heal` → `$(urlfetch https://tradi3-chatgame.onrender.com/api/heal?user=$(user)&channel=$(channel))`
+- `!rest` → `$(urlfetch https://tradi3-chatgame.onrender.com/api/rest?user=$(user)&channel=$(channel))`
 - `!shop` → `$(urlfetch https://tradi3-chatgame.onrender.com/api/shop?user=$(user)&channel=$(channel))` (returns the web shop link; if Twitch OAuth is configured, you can drop the `user` param)
 - `!help` → `https://tradi3-chatgame.onrender.com/home`
 
