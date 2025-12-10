@@ -4,6 +4,7 @@
   <p class="eyebrow">Tool Depot · Season {{season}}</p>
   <h2>Spend site pay without spamming chat.</h2>
   <p>Buy upgrades, sell dupes, keep the slab moving. Uses your Twitch name to link your profile.</p>
+  <div id="shop-meta" data-authed="{{authed}}" data-user="{{user}}"></div>
   {{#if authed}}
     <div class="shop-user">
       <p class="muted">Logged in as <strong>{{user}}</strong>. <a href="/auth/logout">Log out</a></p>
@@ -92,6 +93,9 @@
   const sellInput = document.getElementById("shop-sell-id");
   const sellBtn = document.getElementById("shop-sell-btn");
   const profileInfo = document.getElementById("profile-info");
+  const meta = document.getElementById("shop-meta");
+  const authed = meta?.dataset?.authed === "true";
+  const metaUser = (meta?.dataset?.user || "").trim().toLowerCase();
 
   const storeKey = "cq-user";
 
@@ -122,6 +126,14 @@
   }
 
   function loadUser() {
+    if (authed && metaUser) {
+      userInput.value = metaUser;
+      userInput.disabled = true;
+      if (saveBtn) saveBtn.classList.add("hidden");
+      setStatus(`Using Twitch login: ${metaUser}`);
+      loadProfile(metaUser);
+      return;
+    }
     if (userInput.value) return;
     try {
       const saved = localStorage.getItem(storeKey);
