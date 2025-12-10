@@ -117,7 +117,8 @@ const SHOP_STOCKS = {
     { id: "s1-reinforced-knees", name: "Reinforced Knee Pads", type: "trinket", rarity: "epic", power: 9, price: 280, level: 3 },
     { id: "s1-demo-hammer", name: "Heavy-Duty Demo Hammer", type: "weapon", rarity: "epic", power: 10, price: 320, level: 3 },
     { id: "s1-aurora-rig", name: "Aurora Floodlight Rig", type: "trinket", rarity: "legendary", power: 14, price: 520, level: 4 },
-    { id: "s1-float-king", name: "Float King Pro", type: "weapon", rarity: "rare", power: 7, price: 190, level: 2 }
+    { id: "s1-float-king", name: "Float King Pro", type: "weapon", rarity: "rare", power: 7, price: 190, level: 2 },
+    { id: "s1-first-aid", name: "Site First Aid Kit", type: "consumable", rarity: "rare", power: 0, price: 120, level: 1, heal: 60 }
   ],
   2: [
     { id: "s2-tilt-finisher", name: "Tilt-Up Finisher", type: "weapon", rarity: "common", power: 5, price: 70, level: 1 },
@@ -251,6 +252,46 @@ function makeItemFromStock(stockItem) {
   };
 }
 
+function applyDamage(player, amount) {
+  const now = Date.now();
+  player.hp = Math.max(0, player.hp - amount);
+  let died = false;
+  if (player.hp <= 0) {
+    player.deathUntil = now + 8 * 60 * 60 * 1000; // 8 hours
+    died = true;
+  }
+  return died;
+}
+
+function healPlayer(player, amount) {
+  const prev = player.hp;
+  player.hp = Math.min(player.maxHp || 100, player.hp + amount);
+  if (player.hp > 0 && player.deathUntil > 0) {
+    player.deathUntil = 0;
+  }
+  return player.hp - prev;
+}
+
+function canHeal(player) {
+  const now = Date.now();
+  const windowMs = 8 * 60 * 60 * 1000;
+  if (now - player.healWindow > windowMs) {
+    player.healWindow = now;
+    player.healUses = 0;
+  }
+  return player.healUses < 3;
+}
+
+function recordHealUse(player) {
+  const now = Date.now();
+  const windowMs = 8 * 60 * 60 * 1000;
+  if (now - player.healWindow > windowMs) {
+    player.healWindow = now;
+    player.healUses = 0;
+  }
+  player.healUses += 1;
+}
+
 // Player & boss helpers
 function getPlayer(db, channel, user) {
   const key = `${channel}:${user}`;
@@ -281,6 +322,11 @@ function getPlayer(db, channel, user) {
     if (typeof p.gambles !== "number") p.gambles = 0;
     if (typeof p.wins !== "number") p.wins = 0;
     if (typeof p.losses !== "number") p.losses = 0;
+    if (typeof p.hp !== "number") p.hp = 100;
+    if (typeof p.maxHp !== "number") p.maxHp = 100;
+    if (typeof p.deathUntil !== "number") p.deathUntil = 0;
+    if (typeof p.healWindow !== "number") p.healWindow = 0;
+    if (typeof p.healUses !== "number") p.healUses = 0;
   }
   return db.players[key];
 }
@@ -316,7 +362,11 @@ const utils = {
   rollItem,
   getPlayer,
   getChannelBoss,
-  describeItemShort
+  describeItemShort,
+  applyDamage,
+  healPlayer,
+  canHeal,
+  recordHealUse
 };
 
 // ---------- COMMAND MODULES ----------
@@ -580,6 +630,26 @@ app.get("/api/shop/buy", (req, res) => {
 
   const db = loadDb();
   const p = getPlayer(db, channel, user);
+
+  if (stockItem.type === "consumable") {
+    if (!canHeal(p)) {
+      return res
+        .status(400)
+        .send(`${user}, you've used all heals this shift. Wait before healing again.`);
+    }
+    if (p.coins < stockItem.price) {
+      return res
+        .status(400)
+        .send(`${user}, you need ${stockItem.price} coins for ${stockItem.name}. Pay: ${p.coins}.`);
+    }
+    p.coins -= stockItem.price;
+    const healed = healPlayer(p, stockItem.heal || 60);
+    recordHealUse(p);
+    saveDb(db);
+    return res.send(
+      `${user} used ${stockItem.name} and healed ${healed} HP (HP ${p.hp}/${p.maxHp || 100}). Pay left: ${p.coins}.`
+    );
+  }
 
   if (p.level < stockItem.level) {
     return res.status(400).send(

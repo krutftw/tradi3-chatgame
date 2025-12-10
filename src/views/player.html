@@ -20,6 +20,10 @@
     <div class="progress">
       <div class="progress-bar" style="--progress: {{progress}}%;"></div>
     </div>
+    <p class="muted">HP: {{player.hp}} / {{player.maxHp}}</p>
+    {{#if player.deathUntil}}
+      <p class="muted small">Down until {{player.deathUntil}}</p>
+    {{/if}}
     <div class="stat-pair">
       <div>
         <p class="label">Coins</p>

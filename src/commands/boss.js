@@ -15,13 +15,21 @@ module.exports = {
       getChannelBoss,
       xpForNextLevel,
       randInt,
-      saveDb
+      saveDb,
+      applyDamage
     } = utils;
 
     const player = getPlayer(db, channel, user);
     const boss = getChannelBoss(db, channel);
 
     const now = Date.now();
+    if (player.deathUntil && player.deathUntil > now) {
+      const remaining = player.deathUntil - now;
+      const hrs = Math.floor(remaining / (60 * 60 * 1000));
+      const mins = Math.floor((remaining % (60 * 60 * 1000)) / (60 * 1000));
+      return res.send(`${user}, you're down. Back in ${hrs}h ${mins}m.`);
+    }
+
     const cooldownMs = 10 * 1000;
     if (now - player.lastBoss < cooldownMs) {
       const remaining = Math.ceil(
@@ -114,6 +122,15 @@ module.exports = {
     } else {
       msg +=
         `Hazard HP: ${boss.hp}/${boss.maxHp}. Reward on clear: +${boss.rewardXp} XP, +${boss.rewardCoins} coins.`;
+    }
+
+    // Boss counterattack
+    const retaliation = randInt(6, 12);
+    const died = applyDamage(player, retaliation);
+    if (died) {
+      msg += ` ${boss.name} strikes back for ${retaliation}. ${user} is down for 8h.`;
+    } else {
+      msg += ` Counter hit for ${retaliation} (HP ${player.hp}/${player.maxHp || 100}).`;
     }
 
     saveDb(db);

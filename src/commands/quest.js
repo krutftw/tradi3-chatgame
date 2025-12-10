@@ -16,11 +16,19 @@ module.exports = {
       randInt,
       rollItem,
       describeItemShort,
-      saveDb
+      saveDb,
+      applyDamage
     } = utils;
 
     const player = getPlayer(db, channel, user);
     const now = Date.now();
+
+    if (player.deathUntil && player.deathUntil > now) {
+      const remaining = player.deathUntil - now;
+      const hrs = Math.floor(remaining / (60 * 60 * 1000));
+      const mins = Math.floor((remaining % (60 * 60 * 1000)) / (60 * 1000));
+      return res.send(`${user}, you're injured. Back in ${hrs}h ${mins}m.`);
+    }
 
     const isFirstQuest =
       player.level === 1 &&
@@ -124,6 +132,19 @@ module.exports = {
 
     if (itemText) {
       message += itemText;
+    }
+
+    // Injury chance
+    if (Math.random() < 0.25) {
+      const dmg = randInt(6, 14);
+      const died = applyDamage(player, dmg);
+      if (died) {
+        message += ` Took ${dmg} damage and is down. Back in 8h.`;
+      } else {
+        message += ` Took ${dmg} damage (HP ${player.hp}/${player.maxHp || 100}).`;
+      }
+    } else {
+      message += ` HP ${player.hp}/${player.maxHp || 100}.`;
     }
 
     saveDb(db);

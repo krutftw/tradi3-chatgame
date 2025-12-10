@@ -14,6 +14,12 @@ module.exports = {
     const player = getPlayer(db, channel, user);
 
     const now = Date.now();
+    if (player.deathUntil && player.deathUntil > now) {
+      const remaining = player.deathUntil - now;
+      const hrs = Math.floor(remaining / (60 * 60 * 1000));
+      const mins = Math.floor((remaining % (60 * 60 * 1000)) / (60 * 1000));
+      return res.send(`${user}, you're injured. Back in ${hrs}h ${mins}m.`);
+    }
     const oneDay = 24 * 60 * 60 * 1000;
 
     if (now - player.lastDaily < oneDay) {
