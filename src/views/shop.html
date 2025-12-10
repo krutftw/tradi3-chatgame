@@ -183,11 +183,11 @@
       setStatus("Enter your Twitch name first.", true);
       return;
     }
-    if (!userInput.disabled && userInput.value && userInput.value !== user) {
+    if (userInput && !userInput.disabled && userInput.value && userInput.value !== user) {
       userInput.value = user;
     }
     buying = true;
-    setStatus("Processing purchase...");
+    setStatus(`Processing purchase for ${user}...`);
     try {
       const res = await fetch(`/api/shop/buy?user=${encodeURIComponent(user)}&channel=tradi3&item=${encodeURIComponent(itemId)}`, {
         credentials: "same-origin"
@@ -210,7 +210,7 @@
       return;
     }
     selling = true;
-    setStatus("Selling item...");
+    setStatus(`Selling item ${itemId} for ${user}...`);
     try {
       const res = await fetch(`/api/shop/sell?user=${encodeURIComponent(user)}&channel=tradi3&item=${encodeURIComponent(itemId)}`, {
         credentials: "same-origin"
