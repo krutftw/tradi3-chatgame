@@ -107,6 +107,9 @@
   const authed = meta?.dataset?.authed === "true";
   const metaUser = (meta?.dataset?.user || "").trim().toLowerCase();
 
+  let buying = false;
+  let selling = false;
+
   const storeKey = "cq-user";
 
   const setStatus = (text, isError = false) => {
@@ -171,6 +174,7 @@
   }
 
   async function buy(itemId) {
+    if (buying) return;
     const user = getUser();
     if (!user) {
       setStatus("Enter your Twitch name first.", true);
@@ -179,23 +183,38 @@
     if (!userInput.disabled && userInput.value && userInput.value !== user) {
       userInput.value = user;
     }
+    buying = true;
     setStatus("Processing purchase...");
-    const res = await fetch(`/api/shop/buy?user=${encodeURIComponent(user)}&channel=tradi3&item=${encodeURIComponent(itemId)}`);
-    const text = await res.text();
-    setStatus(text, res.status >= 400);
+    try {
+      const res = await fetch(`/api/shop/buy?user=${encodeURIComponent(user)}&channel=tradi3&item=${encodeURIComponent(itemId)}`);
+      const text = await res.text();
+      setStatus(text, res.status >= 400);
+    } catch (err) {
+      setStatus("Purchase failed. Please try again.", true);
+    } finally {
+      buying = false;
+    }
   }
 
   async function sell() {
+    if (selling) return;
     const user = getUser();
     const itemId = (sellInput.value || "").trim();
     if (!user || !itemId) {
       setStatus("Enter your Twitch name and an item ID.", true);
       return;
     }
+    selling = true;
     setStatus("Selling item...");
-    const res = await fetch(`/api/shop/sell?user=${encodeURIComponent(user)}&channel=tradi3&item=${encodeURIComponent(itemId)}`);
-    const text = await res.text();
-    setStatus(text, res.status >= 400);
+    try {
+      const res = await fetch(`/api/shop/sell?user=${encodeURIComponent(user)}&channel=tradi3&item=${encodeURIComponent(itemId)}`);
+      const text = await res.text();
+      setStatus(text, res.status >= 400);
+    } catch (err) {
+      setStatus("Sell failed. Please try again.", true);
+    } finally {
+      selling = false;
+    }
   }
 
   document.querySelectorAll(".buy-btn").forEach((btn) => {
