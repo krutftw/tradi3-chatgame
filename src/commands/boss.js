@@ -23,25 +23,26 @@ module.exports = {
 
     const now = Date.now();
     const cooldownMs = 10 * 1000;
-
     if (now - player.lastBoss < cooldownMs) {
-      const remaining = Math.ceil((cooldownMs - (now - player.lastBoss)) / 1000);
+      const remaining = Math.ceil(
+        (cooldownMs - (now - player.lastBoss)) / 1000
+      );
       return res.send(
-        `${user}, you are catching your breath. You can attack the boss again in ${remaining}s.`
+        `${user}, you're catching your breath. You can tackle the site hazard again in ${remaining}s.`
       );
     }
-
     player.lastBoss = now;
 
-    // Spawn a boss if none active
+    // Spawn new boss if none active
     if (!boss.active) {
       const names = [
-        "DMCA Hydra",
-        "Lag Demon",
-        "Shadow Stream Sniper",
-        "Cosmic Modbot",
-        "Ad Break Titan"
+        "Concrete Collapse Gremlin",
+        "Rain Delay Demon",
+        "Micromanaging Site Boss",
+        "Broken Mixer Beast",
+        "Council Inspector From Hell"
       ];
+
       const name = names[randInt(0, names.length - 1)];
       const baseHp = 80 + player.level * 10;
 
@@ -55,14 +56,15 @@ module.exports = {
 
       saveDb(db);
       return res.send(
-        `A wild ${boss.name} appears! HP ${boss.hp}/${boss.maxHp}. Type !boss to attack!`
+        `A major site hazard appears: ${boss.name}! HP ${boss.hp}/${boss.maxHp}. Type !boss to fight it!`
       );
     }
 
     // Attack existing boss
     const weaponPower = player.equipped.weapon ? player.equipped.weapon.power : 0;
     const trinketPower = player.equipped.trinket ? player.equipped.trinket.power : 0;
-    const dmg = randInt(8, 16) + player.level * 2 + weaponPower + Math.floor(trinketPower / 2);
+    const dmg =
+      randInt(8, 16) + player.level * 2 + weaponPower + Math.floor(trinketPower / 2);
 
     boss.hp -= dmg;
     if (boss.hp < 0) boss.hp = 0;
@@ -72,7 +74,6 @@ module.exports = {
     if (boss.hp <= 0) {
       const coins = boss.rewardCoins;
       const xp = boss.rewardXp;
-
       player.coins += coins;
       player.xp += xp;
       player.totalCoins += coins;
@@ -87,15 +88,16 @@ module.exports = {
         needed = xpForNextLevel(player.level);
       }
 
-      msg += `${boss.name} is defeated! ${user} gains +${xp} XP and +${coins} coins. ` +
+      msg +=
+        `${boss.name} is cleared from the worksite! ${user} gains +${xp} XP and +${coins} coins. ` +
         `LVL ${player.level} (XP: ${player.xp}/${xpForNextLevel(player.level)}).`;
       if (leveledUp) msg += " 🎉 LEVEL UP!";
 
       boss.active = false;
       boss.hp = 0;
     } else {
-      msg += `Boss HP: ${boss.hp}/${boss.maxHp}. ` +
-        `Reward on kill: +${boss.rewardXp} XP, +${boss.rewardCoins} coins.`;
+      msg +=
+        `Hazard HP: ${boss.hp}/${boss.maxHp}. Reward on clear: +${boss.rewardXp} XP, +${boss.rewardCoins} coins.`;
     }
 
     saveDb(db);

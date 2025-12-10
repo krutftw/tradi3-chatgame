@@ -1,0 +1,21 @@
+{{!< layout}}
+
+<h2>Your Gear</h2>
+
+<div class="panel">
+  {{#if empty}}
+    Inventory empty.
+  {{else}}
+    <ul>
+      {{#each items}}
+      <li>{{this.name}} ({{this.rarity}}, +{{this.power}})</li>
+      {{/each}}
+    </ul>
+  {{/if}}
+</div>
+
+<div class="panel">
+  <p>Equipped:</p>
+  <p>Weapon: {{weapon}}</p>
+  <p>Trinket: {{trinket}}</p>
+</div>

@@ -1,6 +1,6 @@
 // src/commands/inventory.js
 module.exports = {
-  name: "inventory",
+  name: "inv",
 
   handler(req, res, db, utils) {
     const user = (req.query.user || "").toLowerCase();
@@ -17,7 +17,7 @@ module.exports = {
       const weapon = describeItemShort(player.equipped.weapon);
       const trinket = describeItemShort(player.equipped.trinket);
       return res.send(
-        `${user}, your inventory is empty. Equipped → Weapon: ${weapon} | Trinket: ${trinket}.`
+        `${user}, your toolbelt is empty. Equipped → Main tool: ${weapon} | Site perk: ${trinket}.`
       );
     }
 
@@ -29,8 +29,7 @@ module.exports = {
     const trinket = describeItemShort(player.equipped.trinket);
 
     res.send(
-      `${user}'s inventory → ${items.join(" | ")}. ` +
-      `Equipped → Weapon: ${weapon} | Trinket: ${trinket}.`
+      `${user}'s toolbelt → ${items.join(" | ")}. Equipped → Main tool: ${weapon} | Site perk: ${trinket}.`
     );
   }
 };

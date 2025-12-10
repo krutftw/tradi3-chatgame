@@ -21,12 +21,11 @@ module.exports = {
       const hours = Math.floor(remainingMs / (60 * 60 * 1000));
       const mins = Math.floor((remainingMs % (60 * 60 * 1000)) / (60 * 1000));
       return res.send(
-        `${user}, you've already claimed your daily. Come back in ${hours}h ${mins}m.`
+        `${user}, you've already grabbed today’s pay packet. Come back in ${hours}h ${mins}m.`
       );
     }
 
     player.lastDaily = now;
-
     const coins = randInt(40, 80);
     const xp = randInt(20, 40);
 
@@ -45,7 +44,7 @@ module.exports = {
     }
 
     let msg =
-      `${user} claimed their daily reward: +${xp} XP, +${coins} coins. ` +
+      `${user} grabs their daily pay packet: +${xp} XP, +${coins} coins. ` +
       `LVL ${player.level} (XP: ${player.xp}/${xpForNextLevel(player.level)}).`;
     if (leveledUp) msg += " 🎉 LEVEL UP!";
 

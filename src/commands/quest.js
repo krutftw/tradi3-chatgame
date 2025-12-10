@@ -1,6 +1,6 @@
 // src/commands/quest.js
 module.exports = {
-  name: "chatquest",
+  name: "quest",
 
   handler(req, res, db, utils) {
     const user = (req.query.user || "").toLowerCase();
@@ -15,23 +15,33 @@ module.exports = {
       xpForNextLevel,
       randInt,
       rollItem,
+      describeItemShort,
       saveDb
     } = utils;
 
     const player = getPlayer(db, channel, user);
-
     const now = Date.now();
-    const cooldownMs = 10 * 1000;
 
+    // 10s cooldown so it doesn’t get absolutely spammed
+    const cooldownMs = 10 * 1000;
     if (now - player.lastQuest < cooldownMs) {
-      const remaining = Math.ceil((cooldownMs - (now - player.lastQuest)) / 1000);
+      const remaining = Math.ceil(
+        (cooldownMs - (now - player.lastQuest)) / 1000
+      );
       return res.send(
-        `${user}, you are still recovering from your last quest. Try again in ${remaining}s.`
+        `${user}, you're still hosing down the last pour. Try again in ${remaining}s.`
       );
     }
-
     player.lastQuest = now;
 
+    // First-time flavour
+    const isFirstQuest =
+      player.level === 1 &&
+      player.totalXp === 0 &&
+      player.totalCoins === 0 &&
+      player.lastQuest === 0;
+
+    // Gear bonus from equipped items
     const weaponPower = player.equipped.weapon ? player.equipped.weapon.power : 0;
     const trinketPower = player.equipped.trinket ? player.equipped.trinket.power : 0;
     const gearBonus = Math.floor((weaponPower + trinketPower) / 2);
@@ -46,9 +56,9 @@ module.exports = {
     player.totalXp += xpGain;
     player.totalCoins += coinGain;
 
+    // Level up
     let leveledUp = false;
     let needed = xpForNextLevel(player.level);
-
     while (player.xp >= needed) {
       player.xp -= needed;
       player.level += 1;
@@ -56,45 +66,61 @@ module.exports = {
       needed = xpForNextLevel(player.level);
     }
 
+    // Worksite-themed scenarios
     const scenarios = [
-      "explores the neon ruins and finds hidden loot.",
-      "defeats a rogue bot in the data-wastes.",
-      "rescues a lost chatter from ad hell.",
-      "hacks into a glitched server and steals some credits.",
-      "dodges a DMCA laser and survives."
+      "pushes a loaded barrow of mud across the slab without spilling a drop.",
+      "beats the rain and finishes the driveway just before the sky opens up.",
+      "dodges a runaway wheelbarrow and saves the fresh pour.",
+      "helps a rookie fix their formwork before the concrete truck rolls in.",
+      "battles through a surprise site inspection and passes with flying colours.",
+      "runs the trowel machine like a pro and leaves a glassy finish.",
+      "throws in extra reo and future-proofs the slab for decades.",
+      "keeps the worksite tidy and the boss off everyone’s back."
     ];
     const scenario = scenarios[randInt(0, scenarios.length - 1)];
 
-    // 20% item drop
+    // Item drop chance
     let itemText = "";
     if (Math.random() < 0.2) {
       const item = rollItem();
       if (item) {
         player.inventory.push(item);
-        itemText = ` Found item: ${item.name} (${item.rarity}, +${item.power}).`;
+        itemText = ` Found gear: ${item.name} (${item.rarity}, +${item.power}).`;
 
+        // Auto-equip if it’s an upgrade
         if (
           item.type === "weapon" &&
           (!player.equipped.weapon || item.power > player.equipped.weapon.power)
         ) {
           player.equipped.weapon = item;
-          itemText += " Auto-equipped as weapon.";
+          itemText += " Auto-equipped as main tool.";
         } else if (
           item.type === "trinket" &&
           (!player.equipped.trinket || item.power > player.equipped.trinket.power)
         ) {
           player.equipped.trinket = item;
-          itemText += " Auto-equipped as trinket.";
+          itemText += " Auto-equipped as site perk.";
         }
       }
     }
 
-    let message =
-      `${user} ${scenario} +${xpGain} XP, +${coinGain} coins. ` +
+    let message = "";
+
+    if (isFirstQuest) {
+      message += `Welcome to the Worksite, rookie! ${user} clocks on for their first shift. `;
+    }
+
+    message +=
+      `${user} ${scenario} +${xpGain} XP, +${coinGain} site pay. ` +
       `LVL ${player.level} (XP: ${player.xp}/${xpForNextLevel(player.level)}).`;
 
-    if (leveledUp) message += " 🎉 LEVEL UP!";
-    if (itemText) message += itemText;
+    if (leveledUp) {
+      message += " 🎉 LEVEL UP!";
+    }
+
+    if (itemText) {
+      message += itemText;
+    }
 
     saveDb(db);
     res.send(message);

@@ -1,0 +1,38 @@
+body {
+  background: #0a0a0f;
+  color: #f3f3f3;
+  font-family: system-ui;
+  margin: 0;
+}
+
+header {
+  background: #13131c;
+  padding: 12px;
+  display: flex;
+  justify-content: space-between;
+  border-bottom: 3px solid #ffdd33;
+}
+
+nav a {
+  margin-left: 12px;
+  color: #ffdd33;
+  text-decoration: none;
+}
+
+.panel {
+  background: #13131c;
+  border: 1px solid #333;
+  padding: 12px;
+  border-radius: 6px;
+  margin-bottom: 16px;
+}
+
+.btn {
+  background: #ffdd33;
+  padding: 8px 12px;
+  border-radius: 4px;
+  color: #13131c;
+  text-decoration: none;
+  display: inline-block;
+  margin-top: 12px;
+}

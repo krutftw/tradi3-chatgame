@@ -19,7 +19,7 @@ module.exports = {
 
     if (player.coins < amount) {
       return res.send(
-        `${user}, you don't have enough coins to gamble ${amount}. (Coins: ${player.coins})`
+        `${user}, you don't have enough site pay to throw ${amount} coins on a smoko bet. (Pay: ${player.coins})`
       );
     }
 
@@ -27,23 +27,19 @@ module.exports = {
     player.coins -= amount;
 
     if (Math.random() < 0.5) {
-      // lose
       player.losses += 1;
       saveDb(db);
       return res.send(
-        `${user} gambles ${amount} coins and loses. RIP. (Coins left: ${player.coins})`
+        `${user} tosses ${amount} coins on a smoko bet and loses. Back to the wheelbarrow. (Pay left: ${player.coins})`
       );
     } else {
-      // win 2x (net profit = +amount)
       const win = amount * 2;
       player.wins += 1;
       player.coins += win;
-      player.totalCoins += amount;
-
+      player.totalCoins += amount; // net profit
       saveDb(db);
       return res.send(
-        `${user} gambles ${amount} coins and WINS ${win}! ` +
-        `(Coins: ${player.coins}, W:${player.wins}/L:${player.losses})`
+        `${user} wins the smoko bet and pockets ${win} coins! (Pay: ${player.coins}, W:${player.wins}/L:${player.losses})`
       );
     }
   }

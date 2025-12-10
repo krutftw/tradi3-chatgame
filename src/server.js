@@ -2,11 +2,32 @@
 const fs = require("fs");
 const path = require("path");
 const express = require("express");
+const hbs = require("hbs"); // for HTML views/layouts
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Path to DB file (../data/players.json from src/)
+// ---------- VIEW ENGINE + STATIC (WEB UI) ----------
+
+// /src/views
+const viewsPath = path.join(__dirname, "views");
+// /src/public (will hold style.css)
+const publicPath = path.join(__dirname, "public");
+
+app.set("view engine", "html");
+app.engine("html", hbs.__express);
+app.set("views", viewsPath);
+
+// static files -> /style.css etc.
+app.use(express.static(publicPath));
+
+// (optional) partials if you ever add /views/partials/*
+const partialsPath = path.join(viewsPath, "partials");
+if (fs.existsSync(partialsPath)) {
+  hbs.registerPartials(partialsPath);
+}
+
+// ---------- DB PATH ----------
 const DB_PATH = path.join(__dirname, "..", "data", "players.json");
 
 // ---------- ITEM / GEAR POOL (WORKSITE THEME) ----------
@@ -187,12 +208,66 @@ const gambleCmd    = require("./commands/gamble");
 const inventoryCmd = require("./commands/inventory");
 const bossCmd      = require("./commands/boss");
 
-// ---------- ROUTES ----------
+// ---------- WEB PAGES (for !help etc.) ----------
 
-// Health check
+// Simple health check (Render uses this)
 app.get("/", (req, res) => {
   res.send("ChatQuest API is running.");
 });
+
+// Main help / landing page (link this in !help)
+app.get("/home", (req, res) => {
+  res.render("home");
+});
+
+// Player profile page (uses /views/player.html)
+app.get("/player/:user", (req, res) => {
+  const userParam = (req.params.user || "").toLowerCase();
+  const channel = "tradi3"; // for now your channel is baked in
+
+  const db = loadDb();
+  const p = getPlayer(db, channel, userParam);
+
+  res.render("player", {
+    player: p,
+    next: xpForNextLevel(p.level),
+    weapon: describeItemShort(p.equipped.weapon),
+    trinket: describeItemShort(p.equipped.trinket)
+  });
+});
+
+// Inventory page
+app.get("/inventory/:user", (req, res) => {
+  const userParam = (req.params.user || "").toLowerCase();
+  const channel = "tradi3";
+
+  const db = loadDb();
+  const p = getPlayer(db, channel, userParam);
+
+  res.render("inventory", {
+    empty: p.inventory.length === 0,
+    items: p.inventory,
+    weapon: describeItemShort(p.equipped.weapon),
+    trinket: describeItemShort(p.equipped.trinket)
+  });
+});
+
+// Shop placeholder page (Season 2+)
+app.get("/shop", (req, res) => {
+  res.render("shop");
+});
+
+// Boss info placeholder
+app.get("/boss", (req, res) => {
+  res.render("boss");
+});
+
+// Make /help show the same page as /home
+app.get("/help", (req, res) => {
+  res.render("home");
+});
+
+// ---------- API ROUTES FOR FOSSABOT ----------
 
 // Main quest
 app.get("/api/chatquest", (req, res) => {
@@ -239,85 +314,4 @@ app.get("/api/boss", (req, res) => {
 // ---------- START ----------
 app.listen(PORT, () => {
   console.log(`ChatQuest API listening on port ${PORT}`);
-});
-
-// Simple help / docs page (linked from !help)
-app.get("/help", (req, res) => {
-  res.send(`
-    <html>
-      <head>
-        <title>Tradi3 ChatQuest - Help</title>
-        <style>
-          body {
-            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-            background: #050816;
-            color: #f5f5f5;
-            padding: 24px;
-            line-height: 1.5;
-          }
-          h1, h2 {
-            color: #ffdd55;
-          }
-          code {
-            background: rgba(255,255,255,0.06);
-            padding: 2px 5px;
-            border-radius: 4px;
-          }
-          .cmd {
-            margin-bottom: 10px;
-          }
-          .cmd-name {
-            font-weight: 600;
-          }
-        </style>
-      </head>
-      <body>
-        <h1>Tradi3 ChatQuest - Help</h1>
-        <p>Welcome to the Worksite, rookie! This mini-RPG runs in Tradi3's Twitch chat using Fossabot.</p>
-
-        <h2>Basic Commands</h2>
-
-        <div class="cmd">
-          <span class="cmd-name"><code>!quest</code></span> – Go on a quick quest, earn XP & coins, and sometimes find gear.
-        </div>
-
-        <div class="cmd">
-          <span class="cmd-name"><code>!stats</code></span> – Shows your level, XP, coins, and equipped gear.
-        </div>
-
-        <div class="cmd">
-          <span class="cmd-name"><code>!daily</code></span> – Once per day bonus XP & coins.
-        </div>
-
-        <div class="cmd">
-          <span class="cmd-name"><code>!inv</code></span> – Shows your inventory and what you have equipped.
-        </div>
-
-        <div class="cmd">
-          <span class="cmd-name"><code>!top</code></span> – Top players in this channel.
-        </div>
-
-        <div class="cmd">
-          <span class="cmd-name"><code>!boss</code></span> – Spawns/attacks a shared channel boss for big XP & coins.
-        </div>
-
-        <div class="cmd">
-          <span class="cmd-name"><code>!gamble [amount]</code></span> – Gamble some coins (max 200) for a 50/50 shot at doubling.
-        </div>
-
-        <h2>Season 1 – Worksite Theme</h2>
-        <p>
-          The whole game is themed around the worksite and concrete grind:
-          quests are quick jobs, bosses are site hazards, and items are tools / gear.
-        </p>
-
-        <p>
-          More systems are planned:
-          shop, item selling, HP & damage, healing, and seasonal content.
-        </p>
-
-        <p>Questions or ideas? Drop them in chat or the Discord channel.</p>
-      </body>
-    </html>
-  `);
 });
