@@ -74,13 +74,18 @@ module.exports = {
       "battles through a surprise site inspection and passes with flying colours.",
       "runs the trowel machine like a pro and leaves a glassy finish.",
       "throws in extra reo and future-proofs the slab for decades.",
-      "keeps the worksite tidy and the boss off everyone’s back."
+      "keeps the worksite tidy and the boss off everyone’s back.",
+      "scrapes dried mud off the tools before knock-off, keeping gear sharp.",
+      "steps up to guide the pump hose and saves the pour from blowing out.",
+      "patches honeycombing with finesse so the wall looks mint.",
+      "keeps the laser level on point while the crew hammers the pour.",
+      "stays late to edge the slab so the client thinks a wizard was here."
     ];
     const scenario = scenarios[randInt(0, scenarios.length - 1)];
 
     // Item drop chance
     let itemText = "";
-    if (Math.random() < 0.2) {
+    if (Math.random() < 0.18) {
       const item = rollItem();
       if (item) {
         player.inventory.push(item);

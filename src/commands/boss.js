@@ -51,7 +51,10 @@ module.exports = {
         "Slip Hazard Hydra",
         "Jackhammer Wraith",
         "Steelcap Smasher",
-        "Shaky Scaffold Sentinel"
+        "Shaky Scaffold Sentinel",
+        "Dust Storm Behemoth",
+        "Curing Blanket Colossus",
+        "Formwork Kraken"
       ];
 
       const name = names[randInt(0, names.length - 1)];

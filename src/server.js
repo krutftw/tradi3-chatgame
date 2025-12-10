@@ -68,6 +68,8 @@ const ITEM_POOL = [
   { name: "Cracked Spirit Level",     type: "trinket", rarity: "common",    minPower: 1, maxPower: 2 },
   { name: "Dusty Hi-Vis Vest",        type: "trinket", rarity: "common",    minPower: 1, maxPower: 3 },
   { name: "Scuffed Steel Caps",       type: "trinket", rarity: "common",    minPower: 1, maxPower: 3 },
+  { name: "Dull Edging Tool",         type: "weapon",  rarity: "common",    minPower: 1, maxPower: 3 },
+  { name: "Split Work Gloves",        type: "trinket", rarity: "common",    minPower: 1, maxPower: 3 },
 
   // RARE – decent tradie gear
   { name: "Magnesium Bull Float",     type: "weapon",  rarity: "rare",      minPower: 3, maxPower: 7 },
@@ -75,18 +77,23 @@ const ITEM_POOL = [
   { name: "Carbon Screed Rail",       type: "weapon",  rarity: "rare",      minPower: 4, maxPower: 8 },
   { name: "Reo Bender",               type: "weapon",  rarity: "rare",      minPower: 3, maxPower: 7 },
   { name: "Vented Hard Hat",          type: "trinket", rarity: "rare",      minPower: 3, maxPower: 6 },
+  { name: "Fiberglass Bull Float",    type: "weapon",  rarity: "rare",      minPower: 4, maxPower: 8 },
+  { name: "Shock-Absorb Gloves",      type: "trinket", rarity: "rare",      minPower: 3, maxPower: 6 },
 
   // EPIC – big dog contractor gear
   { name: "Diamond Tip Trowel",       type: "weapon",  rarity: "epic",      minPower: 6, maxPower: 11 },
   { name: "Site Foreman Radio",       type: "trinket", rarity: "epic",      minPower: 4, maxPower: 8 },
   { name: "Heavy-Duty Demo Hammer",   type: "weapon",  rarity: "epic",      minPower: 7, maxPower: 12 },
   { name: "Reinforced Knee Pads",     type: "trinket", rarity: "epic",      minPower: 5, maxPower: 9 },
+  { name: "Laser Screed Remote",      type: "trinket", rarity: "epic",      minPower: 6, maxPower: 9 },
+  { name: "Rebar Tie Gun",            type: "weapon",  rarity: "epic",      minPower: 8, maxPower: 12 },
 
   // LEGENDARY – meme-tier god gear
   { name: "Mythic Wheelbarrow",       type: "weapon",  rarity: "legendary", minPower: 10, maxPower: 16 },
   { name: "King of Concrete Gloves",  type: "trinket", rarity: "legendary", minPower: 9, maxPower: 15 },
   { name: "Phantom Screed Machine",   type: "weapon",  rarity: "legendary", minPower: 11, maxPower: 18 },
-  { name: "Aurora Floodlight Rig",    type: "trinket", rarity: "legendary", minPower: 9, maxPower: 15 }
+  { name: "Aurora Floodlight Rig",    type: "trinket", rarity: "legendary", minPower: 9, maxPower: 15 },
+  { name: "Concrete Crown Helm",      type: "trinket", rarity: "legendary", minPower: 10, maxPower: 16 }
 ];
 
 // Season shop stock (rotate per season)
@@ -96,7 +103,8 @@ const SHOP_STOCKS = {
     { id: "s1-laser-level", name: "Laser Line Level", type: "trinket", rarity: "rare", power: 6, price: 160, level: 2 },
     { id: "s1-reinforced-knees", name: "Reinforced Knee Pads", type: "trinket", rarity: "epic", power: 9, price: 280, level: 3 },
     { id: "s1-demo-hammer", name: "Heavy-Duty Demo Hammer", type: "weapon", rarity: "epic", power: 10, price: 320, level: 3 },
-    { id: "s1-aurora-rig", name: "Aurora Floodlight Rig", type: "trinket", rarity: "legendary", power: 14, price: 520, level: 4 }
+    { id: "s1-aurora-rig", name: "Aurora Floodlight Rig", type: "trinket", rarity: "legendary", power: 14, price: 520, level: 4 },
+    { id: "s1-float-king", name: "Float King Pro", type: "weapon", rarity: "rare", power: 7, price: 190, level: 2 }
   ],
   2: [
     { id: "s2-tilt-finisher", name: "Tilt-Up Finisher", type: "weapon", rarity: "common", power: 5, price: 70, level: 1 },
@@ -384,7 +392,9 @@ app.get("/boss", (req, res) => {
 
   res.render("boss", {
     boss,
-    hasBoss
+    hasBoss,
+    authUser: req.authUser,
+    oauthEnabled: OAUTH_ENABLED
   });
 });
 
