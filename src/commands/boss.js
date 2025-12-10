@@ -125,7 +125,7 @@ module.exports = {
     }
 
     // Boss counterattack
-    const retaliation = randInt(6, 12);
+    const retaliation = randInt(6 + player.level, 12 + player.level);
     const died = applyDamage(player, retaliation);
     if (died) {
       msg += ` ${boss.name} strikes back for ${retaliation}. ${user} is down for 8h.`;

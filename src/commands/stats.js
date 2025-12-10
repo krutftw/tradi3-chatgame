@@ -16,10 +16,13 @@ module.exports = {
     const weapon = utils.describeItemShort(player.equipped.weapon);
     const trinket = utils.describeItemShort(player.equipped.trinket);
     const hpText = `HP: ${player.hp || 0}/${player.maxHp || 100}`;
-    const deathLock =
-      player.deathUntil && player.deathUntil > Date.now()
-        ? ` · DOWN for ${Math.ceil((player.deathUntil - Date.now()) / (60 * 60 * 1000))}h`
-        : "";
+    let deathLock = "";
+    if (player.deathUntil && player.deathUntil > Date.now()) {
+      const remainingMs = player.deathUntil - Date.now();
+      const hrs = Math.floor(remainingMs / (60 * 60 * 1000));
+      const mins = Math.floor((remainingMs % (60 * 60 * 1000)) / (60 * 1000));
+      deathLock = ` · DOWN for ${hrs}h ${mins}m`;
+    }
 
     const msg =
       `${user} – Site LVL ${player.level} (XP: ${player.xp}/${xpForNextLevel(player.level)}). ` +

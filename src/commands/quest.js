@@ -64,14 +64,14 @@ module.exports = {
     player.totalCoins += coinGain;
 
     // Level up
-    let leveledUp = false;
-    let needed = xpForNextLevel(player.level);
-    while (player.xp >= needed) {
-      player.xp -= needed;
-      player.level += 1;
-      leveledUp = true;
-      needed = xpForNextLevel(player.level);
-    }
+      let leveledUp = false;
+      let needed = xpForNextLevel(player.level);
+      while (player.xp >= needed) {
+        player.xp -= needed;
+        player.level += 1;
+        leveledUp = true;
+        needed = xpForNextLevel(player.level);
+      }
 
     // Worksite-themed scenarios
     const scenarios = [
@@ -136,7 +136,7 @@ module.exports = {
 
     // Injury chance
     if (Math.random() < 0.25) {
-      const dmg = randInt(6, 14);
+      const dmg = randInt(4 + player.level, 10 + player.level);
       const died = applyDamage(player, dmg);
       if (died) {
         message += ` Took ${dmg} damage and is down. Back in 8h.`;

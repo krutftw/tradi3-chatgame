@@ -377,6 +377,8 @@ const dailyCmd     = require("./commands/daily");
 const gambleCmd    = require("./commands/gamble");
 const inventoryCmd = require("./commands/inventory");
 const bossCmd      = require("./commands/boss");
+const healCmd      = require("./commands/heal");
+const restCmd      = require("./commands/rest");
 
 // ---------- WEB PAGES (for !help etc.) ----------
 
@@ -569,6 +571,18 @@ app.get("/api/top", (req, res) => {
 app.get("/api/daily", (req, res) => {
   const db = loadDb();
   dailyCmd.handler(req, res, db, utils);
+});
+
+// Heal (uses consumable)
+app.get("/api/heal", (req, res) => {
+  const db = loadDb();
+  healCmd.handler(req, res, db, utils);
+});
+
+// Rest (shorten death lock for a cost)
+app.get("/api/rest", (req, res) => {
+  const db = loadDb();
+  restCmd.handler(req, res, db, utils);
 });
 
 // Gamble
