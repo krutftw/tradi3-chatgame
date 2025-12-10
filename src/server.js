@@ -445,7 +445,8 @@ app.get("/shop", (req, res) => {
     authed: !!authedUser,
     season: SEASON,
     oauthEnabled: OAUTH_ENABLED,
-    authUser: req.authUser
+    authUser: req.authUser,
+    channel: CHANNEL
   });
 });
 

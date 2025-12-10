@@ -25,7 +25,7 @@
       <p class="muted small">Trust mode: name is taken from the field above.</p>
     {{/unless}}
   {{/if}}
-  <p class="muted">Channel locked to #tradi3. Purchases auto-equip if they beat your current gear.</p>
+  <p class="muted">Channel locked to #{{channel}}. Purchases auto-equip when better.</p>
 </section>
 
 <section class="grid shop-grid">
@@ -72,7 +72,7 @@
       <input id="shop-sell-id" type="text" placeholder="item id from /inventory" />
       <button class="btn ghost" id="shop-sell-btn" type="button">Sell item</button>
     </div>
-    <p class="muted small">Tip: Check <a href="/inventory/{{#if user}}{{user}}{{else}}tradi3{{/if}}">your inventory page</a> for item IDs.</p>
+    <p class="muted small">Tip: Check <a href="/inventory/{{#if user}}{{user}}{{else}}{{channel}}{{/if}}">your inventory page</a> for item IDs.</p>
     {{#if oauthEnabled}}
       <p class="muted small">Login required for buy/sell. If buttons don't respond, ensure you're logged in.</p>
     {{/if}}
@@ -168,7 +168,7 @@
   async function loadProfile(user) {
     setProfileInfo(`<p class="muted">Loading profile for ${user}...</p>`);
     try {
-      const res = await fetch(`/api/stats?user=${encodeURIComponent(user)}&channel=tradi3`);
+      const res = await fetch(`/api/stats?user=${encodeURIComponent(user)}&channel={{channel}}`);
       const text = await res.text();
       setProfileInfo(`<p>${text}</p>`);
     } catch (err) {
@@ -189,7 +189,7 @@
     buying = true;
     setStatus(`Processing purchase for ${user}...`);
     try {
-      const res = await fetch(`/api/shop/buy?user=${encodeURIComponent(user)}&channel=tradi3&item=${encodeURIComponent(itemId)}`, {
+      const res = await fetch(`/api/shop/buy?user=${encodeURIComponent(user)}&channel={{channel}}&item=${encodeURIComponent(itemId)}`, {
         credentials: "same-origin"
       });
       const text = await res.text();
@@ -212,7 +212,7 @@
     selling = true;
     setStatus(`Selling item ${itemId} for ${user}...`);
     try {
-      const res = await fetch(`/api/shop/sell?user=${encodeURIComponent(user)}&channel=tradi3&item=${encodeURIComponent(itemId)}`, {
+      const res = await fetch(`/api/shop/sell?user=${encodeURIComponent(user)}&channel={{channel}}&item=${encodeURIComponent(itemId)}`, {
         credentials: "same-origin"
       });
       const text = await res.text();

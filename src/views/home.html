@@ -33,7 +33,7 @@
     </ul>
     <div class="actions">
       <a class="btn primary" href="/shop">Open Tool Depot</a>
-      <a class="btn ghost" href="/player/tradi3">View profile</a>
+      <a class="btn ghost" href="/player/{{#if authUser}}{{authUser.login}}{{else}}tradi3{{/if}}">View profile</a>
     </div>
   </div>
   <div class="card">
