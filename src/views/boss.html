@@ -7,6 +7,21 @@
 </section>
 
 <div class="grid two">
+  <div class="card profile-mini">
+    <div class="card-head">
+      <span class="badge badge-accent">Your status</span>
+      <h3>Attack power comes from level + gear</h3>
+    </div>
+    {{#if authUser}}
+      <p class="muted">Logged in as {{authUser.login}}. Gear up via quests/shop before fighting.</p>
+      <p class="muted small">Attack formula: base roll + level*2 + weapon power + trinket power/2.</p>
+      <p class="muted small">Use <code>!stats</code> or visit your profile to check loadout.</p>
+    {{else}}
+      <p class="muted">Log in with Twitch or pass your name in <code>?user=</code> to sync your hits.</p>
+    {{/if}}
+    <p class="muted small">Cooldown: 10s per player.</p>
+  </div>
+
   <div class="card">
     {{#if hasBoss}}
       <div class="card-head">

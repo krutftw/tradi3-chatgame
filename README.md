@@ -38,6 +38,7 @@ The server listens on `PORT` (default 3000).
 - `/inventory/:user` — inventory + equipped.
 - `/boss` — boss status.
 - `/shop` — Tool Depot (buy/sell). Uses Twitch login if configured; otherwise accepts `?user=` fallback.
+- Season banner on `/home`; shop shows rarity visuals and profile snapshot.
 
 ## Shop and seasons
 - Season-specific stock is defined in `src/server.js` (`SHOP_STOCKS` map keyed by `SEASON`).
