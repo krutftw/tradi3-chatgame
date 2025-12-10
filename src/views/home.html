@@ -5,7 +5,10 @@
   <h2>Clock in, run quests, and flex your concrete gear.</h2>
   <p>Everything happens in Twitch chat via Fossabot. This hub keeps your profile, gear, and boss status tidy.</p>
   <div class="actions">
-    <a class="btn primary" href="/player/tradi3">Open your profile</a>
+    {{#if oauthEnabled}}
+      <a class="btn primary" href="/auth/twitch">Login with Twitch</a>
+    {{/if}}
+    <a class="btn ghost" href="/player/tradi3">Open your profile</a>
     <a class="btn ghost" href="/inventory/tradi3">Check your inventory</a>
     <a class="btn ghost" href="/boss">Current boss</a>
   </div>

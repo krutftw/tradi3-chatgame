@@ -35,6 +35,8 @@ app.use((req, _res, next) => {
       req.authUser = null;
     }
   }
+  req.oauthEnabled = OAUTH_ENABLED;
+  req.channelName = CHANNEL;
   next();
 });
 
@@ -314,7 +316,10 @@ app.get("/", (req, res) => {
 
 // Main help / landing page (link this in !help)
 app.get("/home", (req, res) => {
-  res.render("home");
+  res.render("home", {
+    authUser: req.authUser,
+    oauthEnabled: OAUTH_ENABLED
+  });
 });
 
 // Player profile page (uses /views/player.html)
@@ -332,7 +337,9 @@ app.get("/player/:user", (req, res) => {
     next,
     progress,
     weapon: describeItemShort(p.equipped.weapon),
-    trinket: describeItemShort(p.equipped.trinket)
+    trinket: describeItemShort(p.equipped.trinket),
+    authUser: req.authUser,
+    oauthEnabled: OAUTH_ENABLED
   });
 });
 
@@ -349,7 +356,9 @@ app.get("/inventory/:user", (req, res) => {
     empty: p.inventory.length === 0,
     items: p.inventory,
     weapon: describeItemShort(p.equipped.weapon),
-    trinket: describeItemShort(p.equipped.trinket)
+    trinket: describeItemShort(p.equipped.trinket),
+    authUser: req.authUser,
+    oauthEnabled: OAUTH_ENABLED
   });
 });
 
@@ -362,7 +371,8 @@ app.get("/shop", (req, res) => {
     user: authedUser || userQuery,
     authed: !!authedUser,
     season: SEASON,
-    oauthEnabled: OAUTH_ENABLED
+    oauthEnabled: OAUTH_ENABLED,
+    authUser: req.authUser
   });
 });
 

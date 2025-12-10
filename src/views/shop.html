@@ -17,6 +17,9 @@
       {{/if}}
       <button class="btn ghost" id="shop-save-user">Set name</button>
     </div>
+    {{#if oauthEnabled}}
+      <p class="muted">Log in with Twitch to bind purchases to your account.</p>
+    {{/if}}
   {{/if}}
   <p class="muted">Channel locked to #tradi3. Purchases auto-equip if they beat your current gear.</p>
 </section>
@@ -143,6 +146,9 @@
     if (!user) {
       setStatus("Enter your Twitch name first.", true);
       return;
+    }
+    if (!userInput.disabled && userInput.value && userInput.value !== user) {
+      userInput.value = user;
     }
     setStatus("Processing purchase...");
     const res = await fetch(`/api/shop/buy?user=${encodeURIComponent(user)}&channel=tradi3&item=${encodeURIComponent(itemId)}`);
