@@ -49,6 +49,21 @@ a {
   letter-spacing: 0.5px;
 }
 
+.brand-row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.channel-tag {
+  padding: 4px 10px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  color: var(--muted);
+  font-size: 12px;
+  background: rgba(255, 255, 255, 0.03);
+}
+
 .brand-sub {
   color: var(--muted);
   font-size: 12px;
@@ -78,8 +93,9 @@ nav a:hover {
 }
 
 .nav-user {
-  color: var(--muted);
+  color: var(--text);
   padding: 8px 0;
+  font-weight: 600;
 }
 
 .cta {
@@ -193,11 +209,17 @@ nav a:hover {
   border-radius: 12px;
   padding: 16px;
   box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+  transition: border-color 0.2s ease, transform 0.2s ease;
 }
 
 .card.highlight {
   border-color: rgba(246, 201, 14, 0.5);
   background: linear-gradient(135deg, rgba(246, 201, 14, 0.08), var(--panel));
+}
+
+.card:hover {
+  border-color: rgba(246, 201, 14, 0.3);
+  transform: translateY(-2px);
 }
 
 .card-head {
@@ -518,6 +540,11 @@ code {
 .status.error {
   border-color: var(--danger);
   color: var(--danger);
+}
+
+.status:not(.error) {
+  border-color: var(--accent-2);
+  color: var(--accent-2);
 }
 
 .status.info {
