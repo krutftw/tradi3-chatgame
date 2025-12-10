@@ -458,28 +458,6 @@ code {
   gap: 10px;
 }
 
-.thumb {
-  width: 100%;
-  height: 120px;
-  border-radius: 10px;
-  background-size: cover;
-  background-position: center;
-  border: 1px solid var(--border);
-}
-
-.thumb-common {
-  background-image: url("https://images.unsplash.com/photo-1501045661006-fcebe0257c3f?auto=format&fit=crop&w=800&q=80");
-}
-.thumb-rare {
-  background-image: url("https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&w=800&q=80");
-}
-.thumb-epic {
-  background-image: url("https://images.unsplash.com/photo-1503387762-592deb58ef4e?auto=format&fit=crop&w=800&q=80");
-}
-.thumb-legendary {
-  background-image: url("https://images.unsplash.com/photo-1503389152951-9f343605f61e?auto=format&fit=crop&w=800&q=80");
-}
-
 .profile-mini {
   grid-column: span 2;
 }
