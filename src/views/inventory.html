@@ -49,8 +49,8 @@
     </ul>
     <p class="muted">Upgrades auto-equip when they beat what you're wearing. Use item IDs to sell gear in the shop.</p>
     <p class="muted small">HP: {{player.hp}} / {{player.maxHp}}</p>
-    {{#if player.deathUntil}}
-      <p class="muted small">Down until {{player.deathUntil}}</p>
+    {{#if deathText}}
+      <p class="muted small">{{deathText}}</p>
     {{/if}}
   </div>
 </div>

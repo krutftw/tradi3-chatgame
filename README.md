@@ -47,6 +47,12 @@ The server listens on `PORT` (default 3000).
 - Added boss names, quest scenarios, and expanded item pool; legendaries stay ~1%.
 - Backups and /admin/backup endpoint to keep progress safe; shop helper command to reduce chat spam.
 
+## HP, death, healing
+- Players have HP (default 100). If HP hits 0, you're down for 8h and can't quest/boss/daily.
+- Quest damage: 25% chance; scales with level (4+lvl to 10+lvl). Boss counterattacks: 6+lvl to 12+lvl.
+- Heals: Buy First Aid Kits in shop (carry max 3). Use `!heal` to consume a kit (3 uses per 8h; heals 60 HP; can revive you).
+- Rest: `!rest` costs coins to shorten a death lock to 2h and bump you to 30 HP if you were at 0.
+
 ## Shop and seasons
 - Season-specific stock is defined in `src/server.js` (`SHOP_STOCKS` map keyed by `SEASON`).
 - Buying auto-equips upgrades; selling refunds ~50% of value.
