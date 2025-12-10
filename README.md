@@ -38,7 +38,12 @@ The server listens on `PORT` (default 3000).
 - `/inventory/:user` — inventory + equipped.
 - `/boss` — boss status.
 - `/shop` — Tool Depot (buy/sell). Uses Twitch login if configured; otherwise accepts `?user=` fallback.
-- Season banner on `/home`; shop shows rarity visuals and profile snapshot.
+- Season banner on `/home`; shop shows rarity/type tags and profile snapshot.
+
+### Season 1 (Dec 10, 2025) highlights
+- Tool Depot live with buy/sell; Twitch login binds actions (trust-mode fallback if not configured).
+- Added boss names, quest scenarios, and expanded item pool; legendaries stay ~1%.
+- Backups and /admin/backup endpoint to keep progress safe; shop helper command to reduce chat spam.
 
 ## Shop and seasons
 - Season-specific stock is defined in `src/server.js` (`SHOP_STOCKS` map keyed by `SEASON`).

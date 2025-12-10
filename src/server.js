@@ -40,6 +40,19 @@ app.use((req, _res, next) => {
   next();
 });
 
+// Simple rate-limit flag per request to guard shop spam (per-process best effort)
+const lastShopRequest = {};
+app.use((req, _res, next) => {
+  if (!req.path.startsWith("/api/shop")) return next();
+  const key = req.ip;
+  const now = Date.now();
+  if (lastShopRequest[key] && now - lastShopRequest[key] < 500) {
+    req.rateLimited = true;
+  }
+  lastShopRequest[key] = now;
+  next();
+});
+
 // (optional) partials if you ever add /views/partials/*
 const partialsPath = path.join(viewsPath, "partials");
 if (fs.existsSync(partialsPath)) {
@@ -555,6 +568,11 @@ app.get("/api/shop/buy", (req, res) => {
     return res.status(401).send("Login with Twitch to use the shop.");
   }
 
+  // Light request guard to avoid spam/loops
+  if (req.rateLimited) {
+    return res.status(429).send("Shop busy, try again in a moment.");
+  }
+
   const stockItem = SHOP_STOCK.find((s) => s.id === itemId);
   if (!stockItem) {
     return res.status(400).send("Shop error: item not found or not for sale.");
@@ -614,6 +632,10 @@ app.get("/api/shop/sell", (req, res) => {
 
   if (OAUTH_ENABLED && !loggedUser) {
     return res.status(401).send("Login with Twitch to use the shop.");
+  }
+
+  if (req.rateLimited) {
+    return res.status(429).send("Shop busy, try again in a moment.");
   }
 
   const db = loadDb();

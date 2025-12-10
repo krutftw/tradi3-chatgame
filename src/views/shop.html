@@ -21,6 +21,9 @@
     {{#if oauthEnabled}}
       <p class="muted">Log in with Twitch to bind purchases to your account.</p>
     {{/if}}
+    {{#unless oauthEnabled}}
+      <p class="muted small">Trust mode: name is taken from the field above.</p>
+    {{/if}}
   {{/if}}
   <p class="muted">Channel locked to #tradi3. Purchases auto-equip if they beat your current gear.</p>
 </section>
@@ -70,6 +73,9 @@
       <button class="btn ghost" id="shop-sell-btn">Sell item</button>
     </div>
     <p class="muted small">Tip: Check <a href="/inventory/{{#if user}}{{user}}{{else}}tradi3{{/if}}">your inventory page</a> for item IDs.</p>
+    {{#if oauthEnabled}}
+      <p class="muted small">Login required for buy/sell. If buttons don't respond, ensure you're logged in.</p>
+    {{/if}}
   </div>
 
   <div class="card">
