@@ -55,7 +55,7 @@
       </p>
       <div class="product-footer">
         <span class="tag price">{{this.price}} coins</span>
-        <button class="btn primary buy-btn" data-buy="{{this.id}}">Buy</button>
+        <button class="btn primary buy-btn" type="button" data-buy="{{this.id}}">Buy</button>
       </div>
     </div>
   {{/each}}
@@ -70,7 +70,7 @@
     <p class="muted">Grab an item ID from your inventory page, paste it here, and sell it back for a refund.</p>
     <div class="shop-sell">
       <input id="shop-sell-id" type="text" placeholder="item id from /inventory" />
-      <button class="btn ghost" id="shop-sell-btn">Sell item</button>
+      <button class="btn ghost" id="shop-sell-btn" type="button">Sell item</button>
     </div>
     <p class="muted small">Tip: Check <a href="/inventory/{{#if user}}{{user}}{{else}}tradi3{{/if}}">your inventory page</a> for item IDs.</p>
     {{#if oauthEnabled}}
@@ -186,7 +186,9 @@
     buying = true;
     setStatus("Processing purchase...");
     try {
-      const res = await fetch(`/api/shop/buy?user=${encodeURIComponent(user)}&channel=tradi3&item=${encodeURIComponent(itemId)}`);
+      const res = await fetch(`/api/shop/buy?user=${encodeURIComponent(user)}&channel=tradi3&item=${encodeURIComponent(itemId)}`, {
+        credentials: "same-origin"
+      });
       const text = await res.text();
       setStatus(text, res.status >= 400);
     } catch (err) {
@@ -207,7 +209,9 @@
     selling = true;
     setStatus("Selling item...");
     try {
-      const res = await fetch(`/api/shop/sell?user=${encodeURIComponent(user)}&channel=tradi3&item=${encodeURIComponent(itemId)}`);
+      const res = await fetch(`/api/shop/sell?user=${encodeURIComponent(user)}&channel=tradi3&item=${encodeURIComponent(itemId)}`, {
+        credentials: "same-origin"
+      });
       const text = await res.text();
       setStatus(text, res.status >= 400);
     } catch (err) {
