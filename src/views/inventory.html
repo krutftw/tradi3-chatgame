@@ -1,21 +1,43 @@
 {{!< layout}}
 
-<h2>Your Gear</h2>
+<section class="section-head">
+  <p class="eyebrow">Toolbelt</p>
+  <h2>{{player.user}}'s gear</h2>
+  <p class="muted">Channel: {{player.channel}}</p>
+</section>
 
-<div class="panel">
-  {{#if empty}}
-    Inventory empty.
-  {{else}}
-    <ul>
-      {{#each items}}
-      <li>{{this.name}} ({{this.rarity}}, +{{this.power}})</li>
-      {{/each}}
+<div class="grid two">
+  <div class="card">
+    <div class="card-head">
+      <span class="badge">Inventory</span>
+      <h3>First five items</h3>
+    </div>
+    {{#if empty}}
+      <p class="muted">Empty belt. Run !quest for a chance to find tools and PPE.</p>
+    {{else}}
+      <ul class="item-list">
+        {{#each items}}
+          <li>
+            <div>
+              <div class="item-name">{{this.name}}</div>
+              <div class="muted">{{this.rarity}} · +{{this.power}}</div>
+              <div class="muted small">ID: {{this.id}}</div>
+            </div>
+          </li>
+        {{/each}}
+      </ul>
+    {{/if}}
+  </div>
+
+  <div class="card">
+    <div class="card-head">
+      <span class="badge badge-accent">Equipped</span>
+      <h3>Current loadout</h3>
+    </div>
+    <ul class="mini-list">
+      <li><strong>Main tool</strong> — {{weapon}}</li>
+      <li><strong>Site perk</strong> — {{trinket}}</li>
     </ul>
-  {{/if}}
-</div>
-
-<div class="panel">
-  <p>Equipped:</p>
-  <p>Weapon: {{weapon}}</p>
-  <p>Trinket: {{trinket}}</p>
+    <p class="muted">Upgrades auto-equip when they beat what you're wearing. Use item IDs to sell gear in the shop.</p>
+  </div>
 </div>

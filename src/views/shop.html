@@ -1,4 +1,137 @@
 {{!< layout}}
 
-<h2>Tool Depot</h2>
-<p>Coming soon: buy & sell gear here.</p>
+<section class="hero shop-hero">
+  <p class="eyebrow">Tool Depot · Season 1</p>
+  <h2>Spend site pay without spamming chat.</h2>
+  <p>Buy upgrades, sell dupes, keep the slab moving. Uses your Twitch name to link your profile.</p>
+  <div class="shop-user">
+    <label for="shop-user-input">Your Twitch name</label>
+    <input id="shop-user-input" type="text" placeholder="tradi3" value="{{user}}">
+    <button class="btn ghost" id="shop-save-user">Set name</button>
+  </div>
+  <p class="muted">Channel locked to #tradi3. Purchases auto-equip if they beat your current gear.</p>
+</section>
+
+<section class="grid shop-grid">
+  {{#each stock}}
+    <div class="card product">
+      <div class="card-head">
+        <span class="badge rarity-{{this.rarity}}">{{this.rarity}}</span>
+        <h3>{{this.name}}</h3>
+      </div>
+      <p class="muted">{{this.type}} · +{{this.power}} · requires LVL {{this.level}}</p>
+      <div class="product-footer">
+        <span class="tag price">{{this.price}} coins</span>
+        <button class="btn primary buy-btn" data-buy="{{this.id}}">Buy</button>
+      </div>
+    </div>
+  {{/each}}
+</section>
+
+<div class="grid two">
+  <div class="card highlight">
+    <div class="card-head">
+      <span class="badge badge-accent">Sell gear</span>
+      <h3>Turn dupes into coins</h3>
+    </div>
+    <p class="muted">Grab an item ID from your inventory page, paste it here, and sell it back for a refund.</p>
+    <div class="shop-sell">
+      <input id="shop-sell-id" type="text" placeholder="item id from /inventory" />
+      <button class="btn ghost" id="shop-sell-btn">Sell item</button>
+    </div>
+    <p class="muted small">Tip: Check <a href="/inventory/{{#if user}}{{user}}{{else}}tradi3{{/if}}">your inventory page</a> for item IDs.</p>
+  </div>
+
+  <div class="card">
+    <div class="card-head">
+      <span class="badge">How it works</span>
+      <h3>Chat + Web flow</h3>
+    </div>
+    <ul class="mini-list">
+      <li>Use this page for buying/selling to keep chat clean.</li>
+      <li>Quest drops still happen via <code>!quest</code>.</li>
+      <li>Boss and daily rewards unchanged.</li>
+      <li>Shop stock rotates each season.</li>
+    </ul>
+    <p class="muted small">If you refresh or return, your Twitch name is remembered locally.</p>
+  </div>
+</div>
+
+<div id="shop-status" class="status"></div>
+
+<script>
+(function() {
+  const userInput = document.getElementById("shop-user-input");
+  const saveBtn = document.getElementById("shop-save-user");
+  const statusEl = document.getElementById("shop-status");
+  const sellInput = document.getElementById("shop-sell-id");
+  const sellBtn = document.getElementById("shop-sell-btn");
+
+  const storeKey = "cq-user";
+
+  const setStatus = (text, isError = false) => {
+    statusEl.textContent = text;
+    statusEl.classList.toggle("error", isError);
+  };
+
+  function getUser() {
+    return (userInput.value || "").trim().toLowerCase();
+  }
+
+  function saveUser() {
+    const user = getUser();
+    if (!user) {
+      setStatus("Enter your Twitch name to use the shop.", true);
+      return;
+    }
+    try {
+      localStorage.setItem(storeKey, user);
+    } catch (_) {}
+    setStatus(`Using Twitch name: ${user}`);
+  }
+
+  function loadUser() {
+    if (userInput.value) return;
+    try {
+      const saved = localStorage.getItem(storeKey);
+      if (saved) {
+        userInput.value = saved;
+        setStatus(`Using Twitch name: ${saved}`);
+      }
+    } catch (_) {}
+  }
+
+  async function buy(itemId) {
+    const user = getUser();
+    if (!user) {
+      setStatus("Enter your Twitch name first.", true);
+      return;
+    }
+    setStatus("Processing purchase...");
+    const res = await fetch(`/api/shop/buy?user=${encodeURIComponent(user)}&channel=tradi3&item=${encodeURIComponent(itemId)}`);
+    const text = await res.text();
+    setStatus(text, res.status >= 400);
+  }
+
+  async function sell() {
+    const user = getUser();
+    const itemId = (sellInput.value || "").trim();
+    if (!user || !itemId) {
+      setStatus("Enter your Twitch name and an item ID.", true);
+      return;
+    }
+    setStatus("Selling item...");
+    const res = await fetch(`/api/shop/sell?user=${encodeURIComponent(user)}&channel=tradi3&item=${encodeURIComponent(itemId)}`);
+    const text = await res.text();
+    setStatus(text, res.status >= 400);
+  }
+
+  document.querySelectorAll(".buy-btn").forEach((btn) => {
+    btn.addEventListener("click", () => buy(btn.dataset.buy));
+  });
+
+  saveBtn.addEventListener("click", saveUser);
+  sellBtn.addEventListener("click", sell);
+  loadUser();
+})();
+</script>

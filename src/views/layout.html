@@ -3,24 +3,33 @@
 <head>
   <title>Tradi3 ChatQuest</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Semi+Condensed:wght@400;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/style.css" />
 </head>
 <body>
-  <header>
-    <h1>⚒ Tradi3 Worksite</h1>
+  <header class="topbar">
+    <div class="brand">
+      <span class="badge badge-live">Season 1</span>
+      <div class="brand-title">Tradi3 Worksite</div>
+      <div class="brand-sub">Concrete, neon, and chat chaos</div>
+    </div>
     <nav>
       <a href="/home">Home</a>
-      <a href="/shop">Shop</a>
+      <a href="/player/tradi3">Profile</a>
+      <a href="/inventory/tradi3">Inventory</a>
       <a href="/boss">Boss</a>
+      <a href="/shop">Shop</a>
     </nav>
   </header>
 
-  <main>
+  <main class="page">
     {{{body}}}
   </main>
 
-  <footer>
-    <p>Season 1 · Worksite</p>
+  <footer class="footer">
+    <p>Built for Twitch chat · Tradi3 ChatQuest</p>
   </footer>
 </body>
 </html>

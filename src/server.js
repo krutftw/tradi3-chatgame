@@ -29,6 +29,7 @@ if (fs.existsSync(partialsPath)) {
 
 // ---------- DB PATH ----------
 const DB_PATH = path.join(__dirname, "..", "data", "players.json");
+const BACKUP_PATH = path.join(__dirname, "..", "data", "players.backup.json");
 
 // ---------- ITEM / GEAR POOL (WORKSITE THEME) ----------
 const ITEM_POOL = [
@@ -59,6 +60,15 @@ const ITEM_POOL = [
   { name: "Aurora Floodlight Rig",    type: "trinket", rarity: "legendary", minPower: 9, maxPower: 15 }
 ];
 
+// Season 1 shop stock (fixed for now; rotate monthly later)
+const SHOP_STOCK = [
+  { id: "stock-bent-screed", name: "Bent Screed Bar", type: "weapon", rarity: "common", power: 4, price: 60, level: 1 },
+  { id: "stock-laser-level", name: "Laser Line Level", type: "trinket", rarity: "rare", power: 6, price: 160, level: 2 },
+  { id: "stock-reinforced-knees", name: "Reinforced Knee Pads", type: "trinket", rarity: "epic", power: 9, price: 280, level: 3 },
+  { id: "stock-demo-hammer", name: "Heavy-Duty Demo Hammer", type: "weapon", rarity: "epic", power: 10, price: 320, level: 3 },
+  { id: "stock-aurora-rig", name: "Aurora Floodlight Rig", type: "trinket", rarity: "legendary", power: 14, price: 520, level: 4 }
+];
+
 // ---------- DB HELPERS ----------
 function ensureDbShape(rawDb) {
   let db = rawDb;
@@ -72,32 +82,52 @@ function ensureDbShape(rawDb) {
   return db;
 }
 
+function readJsonSafe(filePath) {
+  if (!fs.existsSync(filePath)) return null;
+  try {
+    const raw = fs.readFileSync(filePath, "utf8");
+    return JSON.parse(raw || "{}");
+  } catch (err) {
+    console.warn(`Failed to read ${filePath}:`, err.message);
+    return null;
+  }
+}
+
+function writeJsonSafe(filePath, data) {
+  try {
+    fs.writeFileSync(filePath, JSON.stringify(data, null, 2), "utf8");
+  } catch (err) {
+    console.warn(`Failed to write ${filePath}:`, err.message);
+  }
+}
+
 function loadDb() {
   const dir = path.dirname(DB_PATH);
   if (!fs.existsSync(dir)) {
     fs.mkdirSync(dir, { recursive: true });
   }
 
-  if (!fs.existsSync(DB_PATH)) {
-    fs.writeFileSync(
-      DB_PATH,
-      JSON.stringify({ players: {}, bosses: {} }, null, 2),
-      "utf8"
-    );
+  let parsed = readJsonSafe(DB_PATH);
+  // Fallback to backup if main is missing/corrupt
+  if (!parsed) {
+    parsed = readJsonSafe(BACKUP_PATH);
+    if (parsed) {
+      writeJsonSafe(DB_PATH, parsed);
+    }
   }
 
-  const raw = fs.readFileSync(DB_PATH, "utf8");
-  let parsed;
-  try {
-    parsed = JSON.parse(raw || "{}");
-  } catch {
-    parsed = {};
+  if (!parsed) {
+    parsed = { players: {}, bosses: {} };
+    writeJsonSafe(DB_PATH, parsed);
+    writeJsonSafe(BACKUP_PATH, parsed);
   }
+
   return ensureDbShape(parsed);
 }
 
 function saveDb(db) {
-  fs.writeFileSync(DB_PATH, JSON.stringify(db, null, 2), "utf8");
+  writeJsonSafe(DB_PATH, db);
+  writeJsonSafe(BACKUP_PATH, db);
 }
 
 function xpForNextLevel(level) {
@@ -128,6 +158,36 @@ function rollItem() {
     type: base.type,
     rarity,
     power
+  };
+}
+
+function basePriceForRarity(rarity) {
+  switch (rarity) {
+    case "rare":
+      return 140;
+    case "epic":
+      return 300;
+    case "legendary":
+      return 520;
+    default:
+      return 60;
+  }
+}
+
+function shopSellValue(item) {
+  const base = typeof item.price === "number" ? item.price : basePriceForRarity(item.rarity || "common");
+  const powerBoost = item.power ? item.power * 5 : 0;
+  return Math.max(10, Math.floor((base + powerBoost) * 0.5));
+}
+
+function makeItemFromStock(stockItem) {
+  return {
+    id: Date.now().toString() + "-" + randInt(1000, 9999),
+    name: stockItem.name,
+    type: stockItem.type,
+    rarity: stockItem.rarity,
+    power: stockItem.power,
+    price: stockItem.price
   };
 }
 
@@ -227,10 +287,13 @@ app.get("/player/:user", (req, res) => {
 
   const db = loadDb();
   const p = getPlayer(db, channel, userParam);
+  const next = xpForNextLevel(p.level);
+  const progress = next > 0 ? Math.min(100, Math.round((p.xp / next) * 100)) : 0;
 
   res.render("player", {
     player: p,
-    next: xpForNextLevel(p.level),
+    next,
+    progress,
     weapon: describeItemShort(p.equipped.weapon),
     trinket: describeItemShort(p.equipped.trinket)
   });
@@ -245,6 +308,7 @@ app.get("/inventory/:user", (req, res) => {
   const p = getPlayer(db, channel, userParam);
 
   res.render("inventory", {
+    player: p,
     empty: p.inventory.length === 0,
     items: p.inventory,
     weapon: describeItemShort(p.equipped.weapon),
@@ -254,12 +318,20 @@ app.get("/inventory/:user", (req, res) => {
 
 // Shop placeholder page (Season 2+)
 app.get("/shop", (req, res) => {
-  res.render("shop");
+  const user = (req.query.user || "").toLowerCase();
+  res.render("shop", { stock: SHOP_STOCK, user });
 });
 
 // Boss info placeholder
 app.get("/boss", (req, res) => {
-  res.render("boss");
+  const db = loadDb();
+  const boss = getChannelBoss(db, "tradi3");
+  const hasBoss = boss.active && boss.hp > 0;
+
+  res.render("boss", {
+    boss,
+    hasBoss
+  });
 });
 
 // Make /help show the same page as /home
@@ -309,6 +381,100 @@ app.get("/api/inventory", (req, res) => {
 app.get("/api/boss", (req, res) => {
   const db = loadDb();
   bossCmd.handler(req, res, db, utils);
+});
+
+// Shop buy (GET for Fossabot compatibility)
+app.get("/api/shop/buy", (req, res) => {
+  const user = (req.query.user || "").toLowerCase();
+  const channel = (req.query.channel || "").toLowerCase();
+  const itemId = req.query.item || req.query.id;
+
+  if (!user || !channel || !itemId) {
+    return res.status(400).send("Shop error: missing user, channel, or item.");
+  }
+
+  const stockItem = SHOP_STOCK.find((s) => s.id === itemId);
+  if (!stockItem) {
+    return res.status(400).send("Shop error: item not found or not for sale.");
+  }
+
+  const db = loadDb();
+  const p = getPlayer(db, channel, user);
+
+  if (p.level < stockItem.level) {
+    return res.status(400).send(
+      `${user}, you need to be level ${stockItem.level} to buy ${stockItem.name}.`
+    );
+  }
+
+  if (p.coins < stockItem.price) {
+    return res.status(400).send(
+      `${user}, you need ${stockItem.price} coins for ${stockItem.name}. Pay: ${p.coins}.`
+    );
+  }
+
+  p.coins -= stockItem.price;
+  const item = makeItemFromStock(stockItem);
+  p.inventory.push(item);
+
+  // Auto-equip upgrade
+  let equipNote = "";
+  if (
+    item.type === "weapon" &&
+    (!p.equipped.weapon || item.power > p.equipped.weapon.power)
+  ) {
+    p.equipped.weapon = item;
+    equipNote = " Auto-equipped as main tool.";
+  } else if (
+    item.type === "trinket" &&
+    (!p.equipped.trinket || item.power > p.equipped.trinket.power)
+  ) {
+    p.equipped.trinket = item;
+    equipNote = " Auto-equipped as site perk.";
+  }
+
+  saveDb(db);
+  res.send(
+    `${user} bought ${item.name} (${item.rarity}, +${item.power}) for ${stockItem.price} coins. Pay left: ${p.coins}.${equipNote}`
+  );
+});
+
+// Shop sell by item id (from inventory)
+app.get("/api/shop/sell", (req, res) => {
+  const user = (req.query.user || "").toLowerCase();
+  const channel = (req.query.channel || "").toLowerCase();
+  const itemId = req.query.item || req.query.id;
+
+  if (!user || !channel || !itemId) {
+    return res.status(400).send("Shop sell error: missing user, channel, or item.");
+  }
+
+  const db = loadDb();
+  const p = getPlayer(db, channel, user);
+
+  const idx = p.inventory.findIndex((i) => i.id === itemId);
+  if (idx === -1) {
+    return res.status(400).send(`${user}, item not found in your toolbelt.`);
+  }
+
+  const item = p.inventory[idx];
+  const value = shopSellValue(item);
+  p.inventory.splice(idx, 1);
+  p.coins += value;
+  p.totalCoins += value;
+
+  // Unequip if it was equipped
+  if (p.equipped.weapon && p.equipped.weapon.id === item.id) {
+    p.equipped.weapon = null;
+  }
+  if (p.equipped.trinket && p.equipped.trinket.id === item.id) {
+    p.equipped.trinket = null;
+  }
+
+  saveDb(db);
+  res.send(
+    `${user} sold ${item.name} (${item.rarity}, +${item.power}) for ${value} coins. Pay: ${p.coins}.`
+  );
 });
 
 // ---------- START ----------

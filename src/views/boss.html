@@ -1,4 +1,44 @@
 {{!< layout}}
 
-<h2>Site Hazard</h2>
-<p>Boss info coming soon.</p>
+<section class="section-head">
+  <p class="eyebrow">Site hazard</p>
+  <h2>Channel boss status</h2>
+  <p class="muted">Shared fight for #tradi3. Cooldown 10s per worker. Rewards go to the one who lands the finishing blow.</p>
+</section>
+
+<div class="grid two">
+  <div class="card">
+    {{#if hasBoss}}
+      <div class="card-head">
+        <span class="badge badge-accent">Active</span>
+        <h3>{{boss.name}}</h3>
+      </div>
+      <p class="stat-line">HP: {{boss.hp}} / {{boss.maxHp}}</p>
+      <p class="muted">Reward: +{{boss.rewardXp}} XP, +{{boss.rewardCoins}} coins</p>
+    {{else}}
+      <div class="card-head">
+        <span class="badge">Idle</span>
+        <h3>No hazard on site</h3>
+      </div>
+      <p class="muted">Type <code>!boss</code> in chat to spawn a new hazard.</p>
+    {{/if}}
+    <ul class="mini-list">
+      <li>Damage scales with your level and gear.</li>
+      <li>Hazard HP scales with the strongest worker online.</li>
+      <li>Keep attacks short to avoid chat spam.</li>
+    </ul>
+  </div>
+
+  <div class="card highlight">
+    <div class="card-head">
+      <span class="badge badge-accent">How-to</span>
+      <h3>Fast fight flow</h3>
+    </div>
+    <ol class="steps">
+      <li>Run <code>!boss</code> to spawn or attack.</li>
+      <li>Wait for your 10s cooldown.</li>
+      <li>Finish the hazard, collect rewards, repeat.</li>
+    </ol>
+    <p class="muted">Boss HP is shared per channel—everyone can chip in.</p>
+  </div>
+</div>

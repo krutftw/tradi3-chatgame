@@ -1,15 +1,42 @@
 {{!< layout}}
 
-<h2>Worker Profile</h2>
+<section class="section-head">
+  <p class="eyebrow">Worker profile</p>
+  <h2>{{player.user}}</h2>
+  <p class="muted">Channel: {{player.channel}}</p>
+</section>
 
-<div class="panel">
-  <p><strong>Name:</strong> {{player.user}}</p>
-  <p><strong>Level:</strong> {{player.level}}</p>
-  <p><strong>XP:</strong> {{player.xp}} / {{next}}</p>
-  <p><strong>Coins:</strong> {{player.coins}}</p>
-</div>
+<div class="grid two">
+  <div class="card">
+    <div class="stat-line">
+      <span class="badge badge-accent">Level {{player.level}}</span>
+      <span class="muted">XP: {{player.xp}} / {{next}}</span>
+    </div>
+    <div class="progress">
+      <div class="progress-bar" style="--progress: {{progress}}%;"></div>
+    </div>
+    <div class="stat-pair">
+      <div>
+        <p class="label">Coins</p>
+        <p class="big">{{player.coins}}</p>
+        <p class="muted">Lifetime: {{player.totalCoins}}</p>
+      </div>
+      <div>
+        <p class="label">Total XP poured</p>
+        <p class="big">{{player.totalXp}}</p>
+      </div>
+    </div>
+  </div>
 
-<div class="panel">
-  <p><strong>Weapon:</strong> {{weapon}}</p>
-  <p><strong>Trinket:</strong> {{trinket}}</p>
+  <div class="card">
+    <div class="card-head">
+      <span class="badge">Equipped gear</span>
+      <h3>Stay site-ready</h3>
+    </div>
+    <ul class="mini-list">
+      <li><strong>Main tool</strong> — {{weapon}}</li>
+      <li><strong>Site perk</strong> — {{trinket}}</li>
+    </ul>
+    <p class="muted">Find upgrades via !quest drops. Better gear boosts quest and boss rewards.</p>
+  </div>
 </div>

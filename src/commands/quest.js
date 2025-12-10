@@ -22,6 +22,12 @@ module.exports = {
     const player = getPlayer(db, channel, user);
     const now = Date.now();
 
+    const isFirstQuest =
+      player.level === 1 &&
+      player.totalXp === 0 &&
+      player.totalCoins === 0 &&
+      player.lastQuest === 0;
+
     // 10s cooldown so it doesn’t get absolutely spammed
     const cooldownMs = 10 * 1000;
     if (now - player.lastQuest < cooldownMs) {
@@ -33,13 +39,6 @@ module.exports = {
       );
     }
     player.lastQuest = now;
-
-    // First-time flavour
-    const isFirstQuest =
-      player.level === 1 &&
-      player.totalXp === 0 &&
-      player.totalCoins === 0 &&
-      player.lastQuest === 0;
 
     // Gear bonus from equipped items
     const weaponPower = player.equipped.weapon ? player.equipped.weapon.power : 0;

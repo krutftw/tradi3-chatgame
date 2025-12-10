@@ -1,20 +1,57 @@
 {{!< layout}}
 
-<h2>Welcome to the Worksite</h2>
-
-<p>You are entering a cyber-construction job site. Earn XP, coins and upgrade your gear.</p>
-
-<p>Use <code>!quest</code> in chat or click around here.</p>
-
-<section>
-  <a class="btn" href="/player/tradi3">Your Player Profile</a>
+<section class="hero">
+  <p class="eyebrow">Worksite Ops · Season 1</p>
+  <h2>Clock in, run quests, and flex your concrete gear.</h2>
+  <p>Everything happens in Twitch chat via Fossabot. This hub keeps your profile, gear, and boss status tidy.</p>
+  <div class="actions">
+    <a class="btn primary" href="/player/tradi3">Open your profile</a>
+    <a class="btn ghost" href="/inventory/tradi3">Check your inventory</a>
+    <a class="btn ghost" href="/boss">Current boss</a>
+  </div>
 </section>
 
-<section>
-  <p>Direct Links</p>
-  <ul>
-    <li><a href="/inventory/tradi3">Your Inventory</a></li>
-    <li><a href="/shop">Tool Depot (Shop)</a></li>
-    <li><a href="/boss">Site Hazard</a></li>
-  </ul>
+<section class="grid">
+  <div class="card">
+    <div class="card-head">
+      <span class="badge">Chat commands</span>
+      <h3>Quick calls from Twitch</h3>
+    </div>
+    <ul class="command-list">
+      <li><code>!quest</code> — 10s cooldown. Earn XP/coins, chance to drop gear, auto-equip upgrades.</li>
+      <li><code>!daily</code> — Bigger payout every 24h. Shows remaining time if claimed.</li>
+      <li><code>!boss</code> — Spawns or fights the shared site hazard. Reward scales with the crew.</li>
+      <li><code>!stats</code> — Shows level, XP to next, coins, and equipped gear.</li>
+      <li><code>!top</code> — Top 5 workers in channel (level → total XP).</li>
+      <li><code>!inv</code> — First 5 items in your toolbelt plus equipped weapon/trinket.</li>
+      <li><code>!gamble [amt]</code> — 50/50 smoko bet. Default 10 coins, max 200.</li>
+    </ul>
+  </div>
+
+  <div class="card highlight">
+    <div class="card-head">
+      <span class="badge badge-accent">Run smooth</span>
+      <h3>Pro tips</h3>
+    </div>
+    <ul class="mini-list">
+      <li>Keep chat spam clean: responses stay one-liners.</li>
+      <li>Gear drop rates: ~70% common, 23% rare, 6% epic, 1% legendary.</li>
+      <li>Boss HP/rewards scale to the strongest worker on shift.</li>
+      <li>players.json lives on disk; you won't lose progress on deploy.</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <div class="card-head">
+      <span class="badge">Web tools</span>
+      <h3>Click around while ads run</h3>
+    </div>
+    <div class="tag-list">
+      <a class="tag" href="/player/tradi3">Profile</a>
+      <a class="tag" href="/inventory/tradi3">Inventory</a>
+      <a class="tag" href="/boss">Boss status</a>
+      <a class="tag" href="/shop">Tool Depot</a>
+    </div>
+    <p class="muted">Need a refresher? !help links back here.</p>
+  </div>
 </section>

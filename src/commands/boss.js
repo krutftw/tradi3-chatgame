@@ -35,28 +35,41 @@ module.exports = {
 
     // Spawn new boss if none active
     if (!boss.active) {
+      const channelPlayers = Object.values(db.players).filter(
+        (p) => p.channel === channel
+      );
+      const highestLevel = channelPlayers.length
+        ? Math.max(...channelPlayers.map((p) => p.level || 1))
+        : player.level;
+
       const names = [
         "Concrete Collapse Gremlin",
         "Rain Delay Demon",
         "Micromanaging Site Boss",
         "Broken Mixer Beast",
-        "Council Inspector From Hell"
+        "Council Inspector From Hell",
+        "Slip Hazard Hydra",
+        "Jackhammer Wraith",
+        "Steelcap Smasher",
+        "Shaky Scaffold Sentinel"
       ];
 
       const name = names[randInt(0, names.length - 1)];
-      const baseHp = 80 + player.level * 10;
+      const baseHp = Math.max(70, 70 + highestLevel * 8 + randInt(0, 12));
+      const rewardCoins = 70 + highestLevel * 5 + randInt(0, 40);
+      const rewardXp = 35 + highestLevel * 3 + randInt(0, 20);
 
       boss.name = name;
       boss.maxHp = baseHp;
       boss.hp = baseHp;
-      boss.rewardCoins = randInt(80, 160);
-      boss.rewardXp = randInt(40, 80);
+      boss.rewardCoins = rewardCoins;
+      boss.rewardXp = rewardXp;
       boss.active = true;
       boss.lastSpawn = now;
 
       saveDb(db);
       return res.send(
-        `A major site hazard appears: ${boss.name}! HP ${boss.hp}/${boss.maxHp}. Type !boss to fight it!`
+        `A major site hazard appears: ${boss.name}! HP ${boss.hp}/${boss.maxHp}. Clear it for +${boss.rewardXp} XP, +${boss.rewardCoins} coins.`
       );
     }
 
