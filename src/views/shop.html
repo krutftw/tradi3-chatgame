@@ -22,6 +22,16 @@
 </section>
 
 <section class="grid shop-grid">
+  <div class="card profile-mini">
+    <div class="card-head">
+      <span class="badge badge-accent">Your status</span>
+      <h3>Profile snapshot</h3>
+    </div>
+    <div id="profile-info">
+      <p class="muted">Enter your Twitch name and press “Set name” to load your profile.</p>
+    </div>
+  </div>
+
   {{#each stock}}
     <div class="card product">
       <div class="card-head">
@@ -75,12 +85,17 @@
   const statusEl = document.getElementById("shop-status");
   const sellInput = document.getElementById("shop-sell-id");
   const sellBtn = document.getElementById("shop-sell-btn");
+  const profileInfo = document.getElementById("profile-info");
 
   const storeKey = "cq-user";
 
   const setStatus = (text, isError = false) => {
     statusEl.textContent = text;
     statusEl.classList.toggle("error", isError);
+  };
+
+  const setProfileInfo = (html) => {
+    profileInfo.innerHTML = html;
   };
 
   function getUser() {
@@ -97,6 +112,7 @@
       localStorage.setItem(storeKey, user);
     } catch (_) {}
     setStatus(`Using Twitch name: ${user}`);
+    loadProfile(user);
   }
 
   function loadUser() {
@@ -106,8 +122,20 @@
       if (saved) {
         userInput.value = saved;
         setStatus(`Using Twitch name: ${saved}`);
+        loadProfile(saved);
       }
     } catch (_) {}
+  }
+
+  async function loadProfile(user) {
+    setProfileInfo(`<p class="muted">Loading profile for ${user}...</p>`);
+    try {
+      const res = await fetch(`/api/stats?user=${encodeURIComponent(user)}&channel=tradi3`);
+      const text = await res.text();
+      setProfileInfo(`<p>${text}</p>`);
+    } catch (err) {
+      setProfileInfo(`<p class="muted">Could not load profile.</p>`);
+    }
   }
 
   async function buy(itemId) {

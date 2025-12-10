@@ -388,6 +388,10 @@ code {
   gap: 10px;
 }
 
+.profile-mini {
+  grid-column: span 2;
+}
+
 .product-footer {
   display: flex;
   justify-content: space-between;
@@ -419,6 +423,11 @@ code {
 .status.error {
   border-color: var(--danger);
   color: var(--danger);
+}
+
+.status.info {
+  border-color: var(--accent-2);
+  color: var(--accent-2);
 }
 
 .shop-sell {
