@@ -20,8 +20,8 @@
     </div>
     <nav>
       <a href="/home">Home</a>
-      <a href="/player/tradi3">Profile</a>
-      <a href="/inventory/tradi3">Inventory</a>
+      <a href="/player/{{#if authUser}}{{authUser.login}}{{else}}tradi3{{/if}}">Profile</a>
+      <a href="/inventory/{{#if authUser}}{{authUser.login}}{{else}}tradi3{{/if}}">Inventory</a>
       <a href="/boss">Boss</a>
       <a href="/shop">Shop</a>
       {{#if oauthEnabled}}
