@@ -4,7 +4,7 @@
   <p class="eyebrow">Tool Depot · Season {{season}}</p>
   <h2>Spend site pay without spamming chat.</h2>
   <p>Buy upgrades, sell dupes, keep the slab moving. Uses your Twitch name to link your profile.</p>
-  <div id="shop-meta" data-authed="{{authed}}" data-user="{{user}}"></div>
+  <div id="shop-meta" data-authed="{{#if authed}}true{{else}}false{{/if}}" data-user="{{user}}"></div>
   {{#if authed}}
     <div class="shop-user">
       <p class="muted">Logged in as <strong>{{user}}</strong>. <a href="/auth/logout">Log out</a></p>
@@ -32,7 +32,11 @@
       <h3>Profile snapshot</h3>
     </div>
     <div id="profile-info">
-      <p class="muted">Enter your Twitch name and press “Set name” to load your profile.</p>
+      {{#if authed}}
+        <p class="muted">Logged in as {{user}}. Loading your profile…</p>
+      {{else}}
+        <p class="muted">Enter your Twitch name and press “Set name” to load your profile.</p>
+      {{/if}}
     </div>
   </div>
 
@@ -109,6 +113,8 @@
   };
 
   function getUser() {
+    if (authed && metaUser) return metaUser;
+    if (!userInput) return "";
     return (userInput.value || "").trim().toLowerCase();
   }
 
@@ -127,8 +133,10 @@
 
   function loadUser() {
     if (authed && metaUser) {
-      userInput.value = metaUser;
-      userInput.disabled = true;
+      if (userInput) {
+        userInput.value = metaUser;
+        userInput.disabled = true;
+      }
       if (saveBtn) saveBtn.classList.add("hidden");
       setStatus(`Using Twitch login: ${metaUser}`);
       loadProfile(metaUser);
