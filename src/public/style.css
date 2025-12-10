@@ -249,6 +249,34 @@ nav a:hover {
   font-weight: 700;
 }
 
+.item-rarity {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  color: var(--muted);
+}
+
+.item-rarity::before {
+  content: "";
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.item-rarity.common { border-color: #5f6b7c; color: #b8c4d6; }
+.item-rarity.common::before { background: #5f6b7c; }
+.item-rarity.rare { border-color: #6ac3ff; color: #b4e0ff; }
+.item-rarity.rare::before { background: #6ac3ff; }
+.item-rarity.epic { border-color: #c68cff; color: #e3d0ff; }
+.item-rarity.epic::before { background: #c68cff; }
+.item-rarity.legendary { border-color: #f6c90e; color: #0f131f; background: #f6c90e; font-weight: 700; }
+.item-rarity.legendary::before { background: #0f131f; }
+
 .tag-list {
   display: flex;
   gap: 8px;

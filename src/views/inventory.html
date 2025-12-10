@@ -20,9 +20,10 @@
           <li>
             <div>
               <div class="item-name">{{this.name}}</div>
-              <div class="muted">{{this.rarity}} · +{{this.power}}</div>
+              <div class="muted">+{{this.power}}</div>
               <div class="muted small">ID: {{this.id}}</div>
             </div>
+            <span class="item-rarity {{this.rarity}}">{{this.rarity}}</span>
           </li>
         {{/each}}
       </ul>
