@@ -196,8 +196,15 @@
     btn.addEventListener("click", () => buy(btn.dataset.buy));
   });
 
-  saveBtn.addEventListener("click", saveUser);
-  sellBtn.addEventListener("click", sell);
+  if (saveBtn) {
+    saveBtn.addEventListener("click", saveUser);
+  }
+  if (sellBtn) {
+    sellBtn.addEventListener("click", sell);
+  }
+  if (authed && metaUser) {
+    setStatus(`Using Twitch login: ${metaUser}`);
+  }
   loadUser();
 })();
 </script>
