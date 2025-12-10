@@ -277,6 +277,27 @@ nav a:hover {
 .item-rarity.legendary { border-color: #f6c90e; color: #0f131f; background: #f6c90e; font-weight: 700; }
 .item-rarity.legendary::before { background: #0f131f; }
 
+.type-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  font-size: 12px;
+  color: var(--text);
+}
+
+.type-tag.weapon {
+  border-color: #f6c90e;
+  color: #f6c90e;
+}
+
+.type-tag.trinket {
+  border-color: #4de1ff;
+  color: #4de1ff;
+}
+
 .tag-list {
   display: flex;
   gap: 8px;

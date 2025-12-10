@@ -23,7 +23,10 @@
               <div class="muted">+{{this.power}}</div>
               <div class="muted small">ID: {{this.id}}</div>
             </div>
-            <span class="item-rarity {{this.rarity}}">{{this.rarity}}</span>
+            <div>
+              <span class="item-rarity {{this.rarity}}">{{this.rarity}}</span>
+              <span class="type-tag {{this.type}}">{{this.type}}</span>
+            </div>
           </li>
         {{/each}}
       </ul>

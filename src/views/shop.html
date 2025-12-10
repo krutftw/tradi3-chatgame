@@ -41,7 +41,10 @@
         <span class="badge rarity-{{this.rarity}}">{{this.rarity}}</span>
         <h3>{{this.name}}</h3>
       </div>
-      <p class="muted">{{this.type}} · +{{this.power}} · requires LVL {{this.level}}</p>
+      <p class="muted">
+        <span class="type-tag {{this.type}}">{{this.type}}</span>
+        · +{{this.power}} · requires LVL {{this.level}}
+      </p>
       <div class="product-footer">
         <span class="tag price">{{this.price}} coins</span>
         <button class="btn primary buy-btn" data-buy="{{this.id}}">Buy</button>
