@@ -104,8 +104,9 @@
   const sellBtn = document.getElementById("shop-sell-btn");
   const profileInfo = document.getElementById("profile-info");
   const meta = document.getElementById("shop-meta");
-  const authed = meta?.dataset?.authed === "true";
-  const metaUser = (meta?.dataset?.user || "").trim().toLowerCase();
+  const metaAuthed = meta ? meta.getAttribute("data-authed") : "";
+  const authed = metaAuthed === "true";
+  const metaUser = meta ? (meta.getAttribute("data-user") || "").trim().toLowerCase() : "";
 
   let buying = false;
   let selling = false;
@@ -113,11 +114,13 @@
   const storeKey = "cq-user";
 
   const setStatus = (text, isError = false) => {
+    if (!statusEl) return;
     statusEl.textContent = text;
     statusEl.classList.toggle("error", isError);
   };
 
   const setProfileInfo = (html) => {
+    if (!profileInfo) return;
     profileInfo.innerHTML = html;
   };
 
