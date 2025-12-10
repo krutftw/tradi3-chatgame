@@ -500,6 +500,20 @@ app.get("/api/inventory", (req, res) => {
   inventoryCmd.handler(req, res, db, utils);
 });
 
+// Shop info (link helper)
+app.get("/api/shop", (req, res) => {
+  const user = (req.query.user || "").toLowerCase();
+  const channel = (req.query.channel || "").toLowerCase();
+  if (!user || !channel) {
+    return res.status(400).send("Shop error: missing user or channel.");
+  }
+  const baseUrl = `${req.protocol}://${req.get("host")}`;
+  const shopUrl = `${baseUrl}/shop${OAUTH_ENABLED ? "" : `?user=${encodeURIComponent(user)}`}`;
+  res.send(
+    `Tool Depot → ${shopUrl} (Season ${SEASON}). Buy/sell gear here to keep chat clean.`
+  );
+});
+
 // Boss fight
 app.get("/api/boss", (req, res) => {
   const db = loadDb();
